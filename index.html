@@ -36,7 +36,7 @@
         
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
@@ -387,10 +387,10 @@
         <!-- 主導航 - 金額積分 vs 客戶數積分 -->
         <div class="main-nav">
             <button class="main-nav-item active" onclick="switchMainTab('amount')">
-                金額積分
+                金額積分賽
             </button>
             <button class="main-nav-item" onclick="switchMainTab('customer')">
-                客戶數積分
+                客戶數積分賽
             </button>
         </div>
         
@@ -713,7 +713,7 @@
             // 按金額排名排序（預設）
             groupData.sort((a, b) => a.金額排名 - b.金額排名);
             
-            groupData.forEach(store => {
+            groupData.forEach((store) => {
                 const isAmountQualified = store.業績積分門檻達成率 === 'YES';
                 const hasNoPerformance = store.amountScore === 0;
                 
@@ -762,13 +762,23 @@
             
             abGroupData.forEach((store) => {
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
-                
+                const hasNoPerformance = store.customerScore === 0;
+
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.客戶數排名}`;
+                }
+
                 const row = document.createElement('tr');
                 row.className = `group-${store.group.toLowerCase()}`;
                 
-                // 客戶積分表格使用客戶數排名
-                const rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
-                
+                // 始終顯示原始金額排名，不受排序影響
+                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.客戶數排名) 
+                    : store.客戶數排名;
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -795,12 +805,22 @@
             
             cGroupData.forEach((store) => {
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const hasNoPerformance = store.customerScore === 0;
+
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.客戶數排名}`;
+                }
                 
                 const row = document.createElement('tr');
                 row.className = `group-${store.group.toLowerCase()}`;
                 
-                const rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
-                
+                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.客戶數排名) 
+                    : store.客戶數排名;
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -998,20 +1018,22 @@
             
             data.forEach((store, index) => {
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const hasNoPerformance = store.customerScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.客戶數排名}`;
+                }
                 
                 const row = document.createElement('tr');
-                row.className = `group-${store.group.toLowerCase()}`;
+                row.className = rowClass;
                 
-                // 根據排序欄位決定顯示內容
-                let rankDisplay;
-                if (currentSort.field === '客戶數排名' || currentSort.field === null) {
-                    // 顯示原始客戶數排名
-                    rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
-                } else {
-                    // 顯示當前排序後的順序
-                    const rank = index + 1;
-                    rankDisplay = rank <= 3 ? getRankMedal(rank) : rank;
-                }
+                // 始終顯示原始客戶數排名，不受排序影響
+                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.客戶數排名) 
+                    : store.客戶數排名;
                 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1035,24 +1057,27 @@
             
             data.forEach((store, index) => {
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const hasNoPerformance = store.customerScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.客戶數排名}`;
+                }
                 
                 const row = document.createElement('tr');
-                row.className = `group-${store.group.toLowerCase()}`;
+                row.className = rowClass;
                 
-                // 根據排序欄位決定顯示內容
-                let rankDisplay;
-                if (currentSort.field === '客戶數排名' || currentSort.field === null) {
-                    // 顯示原始客戶數排名
-                    rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
-                } else {
-                    // 顯示當前排序後的順序
-                    const rank = index + 1;
-                    rankDisplay = rank <= 3 ? getRankMedal(rank) : rank;
-                }
+                // 始終顯示原始客戶數排名，不受排序影響
+                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.客戶數排名) 
+                    : store.客戶數排名;
                 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
                     <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
                     <td class="number-cell">${store.新客數}</td>
