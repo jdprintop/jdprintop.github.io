@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0801-0807標籤業績競賽戰報</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .update-time {
+            background: #e3f2fd;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2;
+            border-bottom: 2px solid #2196f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .calendar-icon {
+            color: #dc3545;
+            font-size: 16px;
+        }
+        
+        /* 主導航 - 金額積分 vs 客戶數積分 */
+        .main-nav {
+            display: flex;
+            background: #34495e;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .main-nav-item {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: none;
+            background: #34495e;
+            color: white;
+        }
+        
+        .main-nav-item:hover {
+            background: #2c3e50;
+        }
+        
+        .main-nav-item.active {
+            background: #3498db;
+            border-bottom: 3px solid #e74c3c;
+        }
+        
+        .main-nav-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 25%;
+            height: 50%;
+            width: 1px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* 子導航 - 組別選擇 */
+        .sub-nav {
+            background: #34495e;
+            border-bottom: 1px solid #2c3e50;
+            padding: 0;
+        }
+        
+        /* 標籤組顯示控制 */
+        .tab-group {
+            display: none;
+            gap: 0;
+        }
+        
+        .tab-group.active {
+            display: flex;
+        }
+        
+        .group-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            overflow-x: auto;
+        }
+        
+        .group-tab {
+            padding: 12px 18px;
+            background: #34495e;
+            color: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .group-tab:hover {
+            background: #2c3e50;
+        }
+        
+        .group-tab.active {
+            background: #3498db;
+            border-bottom-color: #e74c3c;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            padding: 12px 6px;
+            text-align: center;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-right: 1px solid #2c3e50;
+            font-size: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+        
+        th:hover {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        
+        th.sortable::after {
+            content: ' ↕️';
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        
+        th.sort-asc::after {
+            content: ' ↑';
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        th.sort-desc::after {
+            content: ' ↓';
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 10px 6px;
+            text-align: center;
+            border-bottom: 1px solid #ecf0f1;
+            border-right: 1px solid #ecf0f1;
+            font-size: 12px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e3f2fd;
+            transition: all 0.2s ease;
+        }
+        
+        .rank-1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important; font-weight: bold; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0 0%, #dcdcdc 100%) !important; font-weight: bold; }
+        .rank-3 { background: linear-gradient(135deg, #ffdbb6 0%, #daa520 100%) !important; font-weight: bold; }
+        
+        .group-a { border-left: 4px solid #2196F3; }
+        .group-b { border-left: 4px solid #FF9800; }
+        .group-c { border-left: 4px solid #9C27B0; }
+        
+        .score-excellent { color: #27ae60; font-weight: bold; }
+        .score-good { color: #f39c12; font-weight: bold; }
+        .score-poor { color: #e74c3c; }
+        
+        .no-performance { background-color: #fff3cd !important; opacity: 0.8; }
+        
+        .store-name {
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: left;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .group-badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            margin-left: 3px;
+        }
+        
+        .badge-a { background: #2196F3; }
+        .badge-b { background: #FF9800; }
+        .badge-c { background: #9C27B0; }
+        
+        .region-badge {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+            margin-left: 2px;
+        }
+        
+        .region-新創 { background: #e74c3c; }
+        .region-營一 { background: #9b59b6; }
+        .region-營二 { background: #3498db; }
+        .region-營三 { background: #1abc9c; }
+        .region-北區 { background: #f39c12; }
+        .region-中區 { background: #27ae60; }
+        .region-南區 { background: #e67e22; }
+        
+        .number-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .qualified {
+            background: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        
+        .threshold-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .sort-info {
+            font-size: 12px;
+            color: #3498db;
+            background: #ebf3fd;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        /* 自我宣告達成率樣式 */
+        .self-declared-rate {
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .rate-excellent { background: #d4edda; color: #155724; }
+        .rate-good { background: #fff3cd; color: #856404; }
+        .rate-poor { background: #f8d7da; color: #721c24; }
+        
+        /* 中和比例樣式 */
+        .zhonghe-ratio {
+            font-size: 11px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .ratio-high { background: #d4edda; color: #155724; }
+        .ratio-medium { background: #fff3cd; color: #856404; }
+        .ratio-low { background: #f8d7da; color: #721c24; }
+        
+        /* 新增達標統計區塊 */
+        .achievement-stats {
+            background: #fff3e0;
+            padding: 15px;
+            margin: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .achievement-stats h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .stat-icon {
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            table { font-size: 11px; }
+            th, td { padding: 6px 3px; }
+            .store-name { max-width: 100px; }
+            .group-tab { padding: 10px 15px; font-size: 0.9em; }
+            .main-nav { flex-direction: column; }
+            .group-tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 0801-0807標籤業績競賽戰報</h1>
+        </div>
+        
+        <!-- 數據更新時間 -->
+        <div class="update-time">
+            <span class="calendar-icon">📅</span>
+            數據更新時間：2024年8月7日
+        </div>
+        
+        <!-- 主導航 - 金額積分 vs 客戶數積分 -->
+        <div class="main-nav">
+            <button class="main-nav-item active" onclick="switchMainTab('amount')">
+                金額積分
+            </button>
+            <button class="main-nav-item" onclick="switchMainTab('customer')">
+                客戶數積分
+            </button>
+        </div>
+        
+        <!-- 子導航 - 組別選擇 -->
+        <div class="sub-nav">
+            <div class="group-tabs">
+                <!-- 金額積分時顯示的標籤 -->
+                <div id="amount-tabs" class="tab-group active">
+                    <button class="group-tab active" onclick="switchGroupTab('group-a')">⭐ A組 (14家)</button>
+                    <button class="group-tab" onclick="switchGroupTab('group-b')">🚀 B組 (15家)</button>
+                    <button class="group-tab" onclick="switchGroupTab('group-c')">👑 C組 (15家)</button>
+                </div>
+                
+                <!-- 客戶數積分時顯示的標籤 -->
+                <div id="customer-tabs" class="tab-group">
+                    <button class="group-tab active" onclick="switchGroupTab('customer-ab')">⭐🚀 A+B組合併分賽</button>
+                    <button class="group-tab" onclick="switchGroupTab('customer-c')">👑 C組分賽</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 金額積分內容區 -->
+        <div id="amount-content" class="tab-content active">
+            <!-- A組分頁 -->
+            <div id="group-a" class="tab-content active">
+                
+                <div class="threshold-info">
+                    <strong>⭐ A組 新星挑戰組：</strong> 業績積分門檻 25,000分 | 客戶數積分門檻 60分 | 14家門市
+                </div>
+                <div class="sort-info" id="sort-info-group-a">目前排序：依金額排名 (固定)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-field="金額排名">金額排名</th>
+                                <th class="sortable" data-field="storeName">門市名稱</th>
+                                <th class="sortable" data-field="region">區域</th>
+                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th>自我宣告</th>
+                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="新客業績">新客業績</th>
+                                <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="group-a-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- B組分頁 -->
+            <div id="group-b" class="tab-content">
+            
+                <div class="threshold-info">
+                    <strong>🚀 B組 飛耀成長組：</strong> 業績積分門檻 35,000分 | 客戶數積分門檻 60分 | 15家門市
+                </div>
+                <div class="sort-info" id="sort-info-group-b">目前排序：依金額排名 (固定)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-field="金額排名">金額排名</th>
+                                <th class="sortable" data-field="storeName">門市名稱</th>
+                                <th class="sortable" data-field="region">區域</th>
+                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th>自我宣告</th>
+                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="新客業績">新客業績</th>
+                                <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="group-b-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="group-c" class="tab-content">
+                
+                <div class="threshold-info">
+                    <strong>👑 C組 經典菁英組：</strong> 業績積分門檻 45,000分 | 客戶數積分門檻 30分 | 15家門市
+                </div>
+                <div class="sort-info" id="sort-info-group-c">目前排序：依金額排名 (固定)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-field="金額排名">金額排名</th>
+                                <th class="sortable" data-field="storeName">門市名稱</th>
+                                <th class="sortable" data-field="region">區域</th>
+                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th>自我宣告</th>
+                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="新客業績">新客業績</th>
+                                <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="group-c-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 客戶數積分內容區 -->
+        <div id="customer-content" class="tab-content">
+            <div class="threshold-info">
+                <strong>👥 客戶數積分競賽：</strong> A+B組合併競賽 | C組獨立競賽<br>
+                <strong>📊 積分計算：</strong> 客戶積分 = 舊客數×1 + 新客數×3
+            </div>
+            
+            <!-- A+B組合併分賽 -->
+            <div id="customer-ab" class="tab-content active">
+                <div class="sort-info">目前排序：依客戶數排名 (固定)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-field="客戶數排名">客戶數排名</th>
+                                <th class="sortable" data-field="storeName">門市名稱</th>
+                                <th class="sortable" data-field="group">組別</th>
+                                <th class="sortable" data-field="region">區域</th>
+                                <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                <th class="sortable" data-field="新客數">新客數</th>
+                                <th class="sortable" data-field="舊客數">舊客數</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-ab-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- C組獨立分賽 -->
+            <div id="customer-c" class="tab-content">
+                <div class="sort-info">目前排序：依客戶數排名 (固定)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-field="客戶數排名">客戶數排名</th>
+                                <th class="sortable" data-field="storeName">門市名稱</th>
+                                <th class="sortable" data-field="group">組別</th>
+                                <th class="sortable" data-field="region">區域</th>
+                                <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                <th class="sortable" data-field="新客數">新客數</th>
+                                <th class="sortable" data-field="舊客數">舊客數</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-c-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入外部數據文件 -->
+    <script src="competition-data.js"></script>
+    
+    <script>
+        // 當前活動分頁
+        let currentMainTab = 'amount';
+        let currentGroupTab = 'group-a';
+        let currentSort = { field: null, direction: 'asc' };
+
+        function getRankMedal(rank) {
+            switch(rank) {
+                case 1: return '🥇';
+                case 2: return '🥈';
+                case 3: return '🥉';
+                default: return rank;
+            }
+        }
+
+        function getGroupBadge(group) {
+            const badges = {
+                'A': '<span class="group-badge badge-a">⭐新星</span>',
+                'B': '<span class="group-badge badge-b">🚀飛耀</span>',
+                'C': '<span class="group-badge badge-c">👑菁英</span>'
+            };
+            return badges[group] || '';
+        }
+
+        function getRegionBadge(region) {
+            return `<span class="region-badge region-${region}">${region}</span>`;
+        }
+
+        function getZhongheRatioClass(ratio) {
+            const numRatio = parseFloat(ratio.replace('%', ''));
+            if (numRatio >= 80) return 'ratio-high';
+            if (numRatio >= 50) return 'ratio-medium';
+            return 'ratio-low';
+        }
+
+        function getSelfDeclaredRateClass(rate) {
+            const numRate = parseFloat(rate.replace('%', ''));
+            if (numRate >= 80) return 'rate-excellent';
+            if (numRate >= 50) return 'rate-good';
+            return 'rate-poor';
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            
+            // 更新主導航狀態
+            document.querySelectorAll('.main-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 切換內容區域
+            document.querySelectorAll('#amount-content, #customer-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tab + '-content').classList.add('active');
+            
+            // 切換子導航標籤組
+            document.querySelectorAll('.tab-group').forEach(group => {
+                group.classList.remove('active');
+            });
+            document.getElementById(tab + '-tabs').classList.add('active');
+            
+            // 重置子導航狀態
+            if (tab === 'amount') {
+                currentGroupTab = 'group-a';
+                document.querySelectorAll('#amount-tabs .group-tab').forEach(groupTab => {
+                    groupTab.classList.remove('active');
+                });
+                document.querySelector('#amount-tabs .group-tab[onclick*="group-a"]').classList.add('active');
+                
+                // 顯示A組內容
+                document.querySelectorAll('#amount-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('group-a').classList.add('active');
+            } else if (tab === 'customer') {
+                currentGroupTab = 'customer-ab';
+                document.querySelectorAll('#customer-tabs .group-tab').forEach(groupTab => {
+                    groupTab.classList.remove('active');
+                });
+                document.querySelector('#customer-tabs .group-tab[onclick*="customer-ab"]').classList.add('active');
+                
+                // 顯示A+B組內容
+                document.querySelectorAll('#customer-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('customer-ab').classList.add('active');
+            }
+            
+            // 載入對應數據
+            loadTabContent();
+        }
+
+        function switchGroupTab(tab) {
+            currentGroupTab = tab;
+            
+            // 更新當前活動標籤組內的標籤狀態
+            const activeTabGroup = document.querySelector('.tab-group.active');
+            if (activeTabGroup) {
+                activeTabGroup.querySelectorAll('.group-tab').forEach(groupTab => {
+                    groupTab.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
+            
+            // 在金額積分模式下切換子內容
+            if (currentMainTab === 'amount') {
+                document.querySelectorAll('#amount-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tab).classList.add('active');
+            } else if (currentMainTab === 'customer') {
+                // 在客戶數積分模式下切換子內容
+                document.querySelectorAll('#customer-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tab).classList.add('active');
+            }
+            
+            // 載入對應數據
+            loadTabContent();
+        }
+
+        function loadTabContent() {
+            // 重置排序狀態
+            currentSort = { field: null, direction: 'asc' };
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            if (currentMainTab === 'amount') {
+                if (currentGroupTab.startsWith('group-')) {
+                    const group = currentGroupTab.replace('group-', '').toUpperCase();
+                    populateGroupTable(group);
+                }
+            } else if (currentMainTab === 'customer') {
+                if (currentGroupTab === 'customer-ab') {
+                    populateCustomerABTable();
+                } else if (currentGroupTab === 'customer-c') {
+                    populateCustomerCTable();
+                }
+            }
+        }
+
+        function populateGroupTable(group) {
+            const tbody = document.getElementById(`group-${group.toLowerCase()}-table`);
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            const groupData = competitionData.filter(store => store.group === group);
+            // 按金額排名排序（預設）
+            groupData.sort((a, b) => a.金額排名 - b.金額排名);
+            
+            groupData.forEach(store => {
+                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const hasNoPerformance = store.amountScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.金額排名}`;
+                }
+                
+                const row = document.createElement('tr');
+                row.className = rowClass;
+                
+                // 始終顯示原始金額排名，不受排序影響
+                const rankDisplay = (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.金額排名) 
+                    : store.金額排名;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
+                    <td class="number-cell">
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                    </td>
+                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
+                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
+                    <td><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function populateCustomerABTable() {
+            const tbody = document.getElementById('customer-ab-table');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // 篩選A+B組數據
+            const abGroupData = competitionData.filter(store => store.group === 'A' || store.group === 'B');
+            // 按客戶數排名排序（預設）
+            abGroupData.sort((a, b) => a.客戶數排名 - b.客戶數排名);
+            
+            abGroupData.forEach((store) => {
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                
+                const row = document.createElement('tr');
+                row.className = `group-${store.group.toLowerCase()}`;
+                
+                // 客戶積分表格使用客戶數排名
+                const rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function populateCustomerCTable() {
+            const tbody = document.getElementById('customer-c-table');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // 篩選C組數據
+            const cGroupData = competitionData.filter(store => store.group === 'C');
+            // 按客戶數排名排序（預設）
+            cGroupData.sort((a, b) => a.客戶數排名 - b.客戶數排名);
+            
+            cGroupData.forEach((store) => {
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                
+                const row = document.createElement('tr');
+                row.className = `group-${store.group.toLowerCase()}`;
+                
+                const rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 初始化排序功能
+        function initializeSorting() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('sortable')) {
+                    const field = e.target.getAttribute('data-field');
+                    sortTable(field, e.target);
+                }
+            });
+        }
+
+        // 排序表格
+        function sortTable(field, headerElement) {
+            // 更新排序方向
+            if (currentSort.field === field) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.direction = 'asc';
+                currentSort.field = field;
+            }
+
+            // 更新表頭樣式
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            headerElement.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+
+            // 獲取當前顯示的數據
+            let currentData = [];
+            if (currentMainTab === 'amount') {
+                const group = currentGroupTab.replace('group-', '').toUpperCase();
+                currentData = competitionData.filter(store => store.group === group);
+            } else if (currentMainTab === 'customer') {
+                if (currentGroupTab === 'customer-ab') {
+                    currentData = competitionData.filter(store => store.group === 'A' || store.group === 'B');
+                } else if (currentGroupTab === 'customer-c') {
+                    currentData = competitionData.filter(store => store.group === 'C');
+                }
+            }
+
+            // 排序數據
+            currentData.sort((a, b) => {
+                let valueA, valueB;
+
+                switch(field) {
+                    case 'storeName':
+                        valueA = a.storeName;
+                        valueB = b.storeName;
+                        break;
+                    case 'region':
+                        valueA = a.region;
+                        valueB = b.region;
+                        break;
+                    case 'amountScore':
+                        valueA = a.amountScore;
+                        valueB = b.amountScore;
+                        break;
+                    case 'group':
+                        valueA = a.group;
+                        valueB = b.group;
+                        break;
+                    case 'customerScore':
+                        valueA = a.customerScore;
+                        valueB = b.customerScore;
+                        break;
+                    case '金額排名':
+                        valueA = a.金額排名;
+                        valueB = b.金額排名;
+                        break;
+                    case '客戶數排名':
+                        valueA = a.客戶數排名;
+                        valueB = b.客戶數排名;
+                        break;
+                    case '新客業績':
+                        valueA = a.新客業績;
+                        valueB = b.新客業績;
+                        break;
+                    case '舊客業績':
+                        valueA = a.舊客業績;
+                        valueB = b.舊客業績;
+                        break;
+                    case '新客數':
+                        valueA = a.新客數;
+                        valueB = b.新客數;
+                        break;
+                    case '舊客數':
+                        valueA = a.舊客數;
+                        valueB = b.舊客數;
+                        break;
+                    case '中和比例':
+                        valueA = parseFloat(a.中和比例.replace('%', ''));
+                        valueB = parseFloat(b.中和比例.replace('%', ''));
+                        break;
+                    default:
+                        return 0;
+                }
+
+                // 比較邏輯
+                if (typeof valueA === 'string') {
+                    return currentSort.direction === 'asc' 
+                        ? valueA.localeCompare(valueB)
+                        : valueB.localeCompare(valueA);
+                } else {
+                    return currentSort.direction === 'asc' 
+                        ? valueA - valueB
+                        : valueB - valueA;
+                }
+            });
+
+            // 重新填充表格
+            if (currentMainTab === 'amount') {
+                const group = currentGroupTab.replace('group-', '').toUpperCase();
+                populateGroupTableWithData(group, currentData);
+            } else if (currentMainTab === 'customer') {
+                if (currentGroupTab === 'customer-ab') {
+                    populateCustomerABTableWithData(currentData);
+                } else if (currentGroupTab === 'customer-c') {
+                    populateCustomerCTableWithData(currentData);
+                }
+            }
+
+            // 更新排序資訊
+            updateSortInfo(field);
+        }
+
+        // 使用指定數據填充組別表格
+        function populateGroupTableWithData(group, data) {
+            const tbody = document.getElementById(`group-${group.toLowerCase()}-table`);
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            data.forEach((store) => {
+                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const hasNoPerformance = store.amountScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.金額排名}`;
+                }
+                
+                const row = document.createElement('tr');
+                row.className = rowClass;
+                
+                // 始終顯示原始金額排名，不受排序影響
+                const rankDisplay = (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.金額排名) 
+                    : store.金額排名;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
+                    <td class="number-cell">
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                    </td>
+                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
+                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
+                    <td><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 使用指定數據填充客戶A+B表格
+        function populateCustomerABTableWithData(data) {
+            const tbody = document.getElementById('customer-ab-table');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            data.forEach((store, index) => {
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                
+                const row = document.createElement('tr');
+                row.className = `group-${store.group.toLowerCase()}`;
+                
+                // 根據排序欄位決定顯示內容
+                let rankDisplay;
+                if (currentSort.field === '客戶數排名' || currentSort.field === null) {
+                    // 顯示原始客戶數排名
+                    rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
+                } else {
+                    // 顯示當前排序後的順序
+                    const rank = index + 1;
+                    rankDisplay = rank <= 3 ? getRankMedal(rank) : rank;
+                }
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 使用指定數據填充客戶C組表格
+        function populateCustomerCTableWithData(data) {
+            const tbody = document.getElementById('customer-c-table');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            data.forEach((store, index) => {
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                
+                const row = document.createElement('tr');
+                row.className = `group-${store.group.toLowerCase()}`;
+                
+                // 根據排序欄位決定顯示內容
+                let rankDisplay;
+                if (currentSort.field === '客戶數排名' || currentSort.field === null) {
+                    // 顯示原始客戶數排名
+                    rankDisplay = store.客戶數排名 <= 3 ? getRankMedal(store.客戶數排名) : store.客戶數排名;
+                } else {
+                    // 顯示當前排序後的順序
+                    const rank = index + 1;
+                    rankDisplay = rank <= 3 ? getRankMedal(rank) : rank;
+                }
+                
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 更新排序資訊
+        function updateSortInfo(field) {
+            const fieldNames = {
+                'storeName': '門市名稱',
+                'region': '區域',
+                'group': '組別',
+                'amountScore': '金額積分',
+                'customerScore': '客戶數積分',
+                '新客業績': '新客業績',
+                '舊客業績': '舊客業績',
+                '新客數': '新客數',
+                '舊客數': '舊客數',
+                '中和比例': '中和發包比率',
+                '金額排名': '金額排名',
+                '客戶數排名': '客戶數排名'
+            };
+            
+            const direction = currentSort.direction === 'asc' ? '升序' : '降序';
+            const sortInfo = document.getElementById(`sort-info-${currentGroupTab}`);
+            
+            if (sortInfo) {
+                sortInfo.textContent = `目前排序：依${fieldNames[field]} (${direction})`;
+            }
+        }
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 檢查數據是否載入
+            if (typeof competitionData === 'undefined') {
+                console.error('競賽數據未載入，請確保 competition-data.js 文件正確載入');
+                // 顯示錯誤訊息給用戶
+                document.querySelector('.container').innerHTML = `
+                    <div style="padding: 50px; text-align: center; color: #e74c3c;">
+                        <h2>❌ 數據載入失敗</h2>
+                        <p>無法載入競賽數據，請檢查 competition-data.js 文件是否存在且格式正確。</p>
+                        <p>請確保該文件與 HTML 文件在同一目錄下。</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 數據載入成功，初始化頁面
+            loadTabContent();
+            initializeSorting();
+        });
+    </script>
+</body>
+</html>
+                    
