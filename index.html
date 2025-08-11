@@ -57,7 +57,8 @@
             color: #dc3545;
             font-size: 16px;
         }
-        
+
+
         /* 主導航 - 金額積分 vs 客戶數積分 */
         .main-nav {
             display: flex;
@@ -736,7 +737,7 @@
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}${isAmountQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
@@ -784,7 +785,7 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                 `;
@@ -826,7 +827,7 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                 `;
@@ -996,7 +997,7 @@
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}${isAmountQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
@@ -1040,7 +1041,7 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                 `;
@@ -1079,7 +1080,7 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                 `;
