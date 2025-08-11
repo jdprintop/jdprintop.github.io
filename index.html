@@ -429,8 +429,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="amountScore">金額積分</th>
-                                <th>自我宣告</th>
-                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比率</th>
@@ -457,8 +457,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="amountScore">金額積分</th>
-                                <th>自我宣告</th>
-                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比率</th>
@@ -484,8 +484,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="amountScore">金額積分</th>
-                                <th>自我宣告</th>
-                                <th>宣告達成率</th>
+                                <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比率</th>
@@ -890,6 +890,14 @@
                         valueA = a.新客業績;
                         valueB = b.新客業績;
                         break;
+                    case '自我宣告目標':
+                        valueA = a.自我宣告目標;
+                        valueB = b.自我宣告目標;
+                        break;
+                    case '自我宣告達成率':
+                        valueA = parseFloat(a.自我宣告達成率.replace('%', ''));
+                        valueB = parseFloat(b.自我宣告達成率.replace('%', ''));
+                        break;
                     case '舊客業績':
                         valueA = a.舊客業績;
                         valueB = b.舊客業績;
@@ -1064,6 +1072,8 @@
                 'customerScore': '客戶數積分',
                 '新客業績': '新客業績',
                 '舊客業績': '舊客業績',
+                '自我宣告目標': '自我宣告目標',
+                '自我宣告達成率': '自我宣告達成率',
                 '新客數': '新客數',
                 '舊客數': '舊客數',
                 '中和比例': '中和發包比率',
