@@ -62,7 +62,7 @@
         /* 主導航 - 金額積分 vs 客戶數積分 */
         .main-nav {
             display: flex;
-            background: #34495e;I
+            background: #34495e;
             color: white;
             overflow: hidden;
         }
@@ -403,6 +403,9 @@
             <button class="main-nav-item" onclick="switchMainTab('customer')">
                 客戶數積分賽
             </button>
+            <button class="main-nav-item" onclick="switchMainTab('region')">
+                區域分析
+            </button>
         </div>
         
         <!-- 子導航 - 組別選擇 -->
@@ -419,6 +422,16 @@
                 <div id="customer-tabs" class="tab-group">
                     <button class="group-tab active" onclick="switchGroupTab('customer-ab')">⭐🚀 A+B組合併分賽</button>
                     <button class="group-tab" onclick="switchGroupTab('customer-c')">👑 C組分賽</button>
+                </div>
+                <!-- 區域分析時顯示的標籤 -->
+                <div id="region-tabs" class="tab-group">
+                    <button class="group-tab active" onclick="switchGroupTab('region-營一')">🏢 營一</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-營二')">🏢 營二</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-營三')">🏢 營三</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-北區')">🌏 北區</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-中區')">🌏 中區</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-南區')">🌏 南區</button>
+                    <button class="group-tab" onclick="switchGroupTab('region-新創')">🚀 新創</button>
                 </div>
             </div>
         </div>
@@ -562,6 +575,201 @@
                 </div>
             </div>
         </div>
+        <!-- 區域分析內容區 -->
+        <div id="region-content" class="tab-content">
+                <div class="threshold-info">
+                    <strong>🌏 區域分析：</strong> 各區域門市業績與客戶數據統計
+                </div>
+                
+                <!-- 營一 -->
+                <div id="region-營一" class="tab-content active">
+                    <div class="sort-info" id="sort-info-region-營一">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>                                   
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-營一-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 營二 -->
+                <div id="region-營二" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-營二">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-營二-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 營三 -->
+                <div id="region-營三" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-營三">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-營三-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 北區 -->
+                <div id="region-北區" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-北區">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-北區-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 中區 -->
+                <div id="region-中區" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-中區">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-中區-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 南區 -->
+                <div id="region-南區" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-南區">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-南區-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 新創 -->
+                <div id="region-新創" class="tab-content">
+                    <div class="sort-info" id="sort-info-region-新創">目前排序：依金額排名 (固定)</div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-field="金額排名">金額排名</th>
+                                    <th class="sortable" data-field="storeName">門市名稱</th>
+                                    <th class="sortable" data-field="group">組別</th>
+                                    <th class="sortable" data-field="amountScore">金額積分</th>
+                                    <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                    <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
+                                    <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
+                                    <th class="sortable" data-field="新客業績">新客業績</th>
+                                    <th class="sortable" data-field="舊客業績">舊客業績</th>
+                                    <th class="sortable" data-field="新客數">新客數</th>
+                                    <th class="sortable" data-field="舊客數">舊客數</th>
+                                    <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="region-新創-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
     </div>
     
     <!-- 引入外部數據文件 -->
@@ -623,7 +831,7 @@
             event.target.classList.add('active');
             
             // 切換內容區域
-            document.querySelectorAll('#amount-content, #customer-content').forEach(content => {
+            document.querySelectorAll('#amount-content, #customer-content, #region-content').forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(tab + '-content').classList.add('active');
@@ -659,6 +867,18 @@
                     content.classList.remove('active');
                 });
                 document.getElementById('customer-ab').classList.add('active');
+            } else if (tab === 'region') {
+                currentGroupTab = 'region-營一';
+                document.querySelectorAll('#region-tabs .group-tab').forEach(groupTab => {
+                    groupTab.classList.remove('active');
+                });
+                document.querySelector('#region-tabs .group-tab[onclick*="region-營一"]').classList.add('active');
+                
+                // 顯示營一內容
+                document.querySelectorAll('#region-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('region-營一').classList.add('active');
             }
             
             // 載入對應數據
@@ -677,15 +897,19 @@
                 event.target.classList.add('active');
             }
             
-            // 在金額積分模式下切換子內容
+            // 在各模式下切換子內容
             if (currentMainTab === 'amount') {
                 document.querySelectorAll('#amount-content .tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
                 document.getElementById(tab).classList.add('active');
             } else if (currentMainTab === 'customer') {
-                // 在客戶數積分模式下切換子內容
                 document.querySelectorAll('#customer-content .tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tab).classList.add('active');
+            } else if (currentMainTab === 'region') {
+                document.querySelectorAll('#region-content .tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
                 document.getElementById(tab).classList.add('active');
@@ -712,6 +936,11 @@
                     populateCustomerABTable();
                 } else if (currentGroupTab === 'customer-c') {
                     populateCustomerCTable();
+                }
+            } else if (currentMainTab === 'region') {
+                if (currentGroupTab.startsWith('region-')) {
+                    const region = currentGroupTab.replace('region-', '');
+                    populateRegionTable(region);
                 }
             }
         }
@@ -849,6 +1078,89 @@
                 tbody.appendChild(row);
             });
         }
+        function populateRegionTable(region) {
+            const tbody = document.getElementById(`region-${region}-table`);
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            const regionData = competitionData.filter(store => store.region === region);
+            // 按金額排名排序（預設）
+            regionData.sort((a, b) => a.金額排名 - b.金額排名);
+            
+            regionData.forEach((store) => {
+                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const hasNoPerformance = store.amountScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                
+                const row = document.createElement('tr');
+                row.className = rowClass;
+                
+                row.innerHTML = `
+                    <td class="number-cell">${store.金額排名}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
+                    <td class="number-cell">
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                    </td>
+                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
+                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function populateRegionTableWithData(region, data) {
+            const tbody = document.getElementById(`region-${region}-table`);
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            data.forEach((store) => {
+                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const hasNoPerformance = store.amountScore === 0;
+                
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.金額排名}`;
+                }
+                const row = document.createElement('tr');
+                row.className = rowClass;
+                // 區域分析中的排名顯示
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
+                    ? getRankMedal(store.金額排名) 
+                    : store.金額排名;
+
+                row.innerHTML = `
+                    <td class="number-cell">${store.金額排名}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
+                    <td class="number-cell">
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                    </td>
+                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
+                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
         // 初始化排序功能
         function initializeSorting() {
@@ -887,6 +1199,9 @@
                 } else if (currentGroupTab === 'customer-c') {
                     currentData = competitionData.filter(store => store.group === 'C');
                 }
+            } else if (currentMainTab === 'region') {
+                const region = currentGroupTab.replace('region-', '');
+                currentData = competitionData.filter(store => store.region === region);
             }
 
             // 排序數據
@@ -976,6 +1291,9 @@
                 } else if (currentGroupTab === 'customer-c') {
                     populateCustomerCTableWithData(currentData);
                 }
+            } else if (currentMainTab === 'region') {
+                const region = currentGroupTab.replace('region-', '');
+                populateRegionTableWithData(region, currentData);
             }
 
             // 更新排序資訊
