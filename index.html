@@ -62,7 +62,7 @@
         /* 主導航 - 金額積分 vs 客戶數積分 */
         .main-nav {
             display: flex;
-            background: #34495e;
+            background: #34495e;I
             color: white;
             overflow: hidden;
         }
@@ -330,6 +330,11 @@
         .ratio-medium { background: #fff3cd; color: #856404; }
         .ratio-low { background: #f8d7da; color: #721c24; }
         
+        .ratio-high::after {
+            content: ' ✅';
+            margin-left: 4px;
+        }
+
         /* 新增達標統計區塊 */
         .achievement-stats {
             background: #fff3e0;
@@ -361,7 +366,11 @@
         .stat-icon {
             font-size: 16px;
         }
-        
+        .qualified::after {
+            content: ' ✅';
+            margin-left: 4px;
+        }
+
         @media (max-width: 768px) {
             .header h1 { font-size: 1.8em; }
             table { font-size: 11px; }
@@ -434,7 +443,7 @@
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="中和比例">中和發包比例</th>
                             </tr>
                         </thead>
                         <tbody id="group-a-table">
@@ -462,7 +471,7 @@
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="中和比例">中和發包比例</th>
                             </tr>
                         </thead>
                         <tbody id="group-b-table">
@@ -489,7 +498,7 @@
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="中和比例">中和發包比例</th>
                             </tr>
                         </thead>
                         <tbody id="group-c-table">
@@ -520,6 +529,7 @@
                                 <th class="sortable" data-field="customerScore">客戶數積分</th>
                                 <th class="sortable" data-field="新客數">新客數</th>
                                 <th class="sortable" data-field="舊客數">舊客數</th>
+                                <th class="sortable" data-field="中和比例">中和發包比率</th> 
                             </tr>
                         </thead>
                         <tbody id="customer-ab-table">
@@ -542,6 +552,7 @@
                                 <th class="sortable" data-field="customerScore">客戶數積分</th>
                                 <th class="sortable" data-field="新客數">新客數</th>
                                 <th class="sortable" data-field="舊客數">舊客數</th>
+                                <th class="sortable" data-field="中和比例">中和發包比率</th> 
                             </tr>
                         </thead>
                         <tbody id="customer-c-table">
@@ -721,7 +732,7 @@
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
-                if (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) {
+                if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.金額排名}`;
                 }
                 
@@ -729,7 +740,7 @@
                 row.className = rowClass;
                 
                 // 始終顯示原始金額排名，不受排序影響
-                const rankDisplay = (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) 
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
@@ -737,14 +748,14 @@
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}${isAmountQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
                     </td>
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
-                    <td><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -772,9 +783,9 @@
                     rowClass += ` rank-${store.客戶數排名}`;
                 }
 
-                const row = document.createElement('tr');
-                row.className = `group-${store.group.toLowerCase()}`;
-                
+                const row = document.createElement('tr'); 
+                row.className = rowClass;
+
                 // 始終顯示原始金額排名，不受排序影響
                 const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.客戶數排名) 
@@ -785,9 +796,11 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+
                 `;
                 tbody.appendChild(row);
             });
@@ -815,9 +828,9 @@
                     rowClass += ` rank-${store.客戶數排名}`;
                 }
                 
-                const row = document.createElement('tr');
-                row.className = `group-${store.group.toLowerCase()}`;
-                
+                const row = document.createElement('tr');  
+                row.className = rowClass;
+
                 const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.客戶數排名) 
                     : store.客戶數排名;
@@ -827,9 +840,10 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -981,7 +995,7 @@
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
-                if (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) {
+                if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.金額排名}`;
                 }
                 
@@ -989,7 +1003,7 @@
                 row.className = rowClass;
                 
                 // 始終顯示原始金額排名，不受排序影響
-                const rankDisplay = (currentSort.field === null && store.金額排名 <= 3 && !hasNoPerformance) 
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
@@ -997,14 +1011,14 @@
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}${isAmountQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
                     </td>
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
-                    <td><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1024,7 +1038,7 @@
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
-                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.客戶數排名}`;
                 }
                 
@@ -1032,7 +1046,7 @@
                 row.className = rowClass;
                 
                 // 始終顯示原始客戶數排名，不受排序影響
-                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.客戶數排名) 
                     : store.客戶數排名;
                 
@@ -1041,9 +1055,11 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+
                 `;
                 tbody.appendChild(row);
             });
@@ -1063,7 +1079,7 @@
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
-                if (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                f ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.客戶數排名}`;
                 }
                 
@@ -1071,7 +1087,7 @@
                 row.className = rowClass;
                 
                 // 始終顯示原始客戶數排名，不受排序影響
-                const rankDisplay = (currentSort.field === null && store.客戶數排名 <= 3 && !hasNoPerformance) 
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
                     ? getRankMedal(store.客戶數排名) 
                     : store.客戶數排名;
                 
@@ -1080,9 +1096,10 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}${isCustomerQualified ? ' ✅' : ''}</td>
+                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1102,7 +1119,7 @@
                 '自我宣告達成率': '自我宣告達成率',
                 '新客數': '新客數',
                 '舊客數': '舊客數',
-                '中和比例': '中和發包比率',
+                '中和比例': '中和發包比例',
                 '金額排名': '金額排名',
                 '客戶數排名': '客戶數排名'
             };
