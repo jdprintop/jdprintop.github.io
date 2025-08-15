@@ -362,6 +362,16 @@
             margin-left: 4px;
         }
 
+        /* 總計列樣式 */
+        .total-row {
+            background-color: #f8f9fa !important;
+            font-weight: bold;
+        }
+        
+        .total-row td {
+            border-top: 2px solid #dee2e6;
+        }
+
         /* 新增達標統計區塊 */
         .achievement-stats {
             background: #fff3e0;
@@ -1127,10 +1137,25 @@
             // 按金額排名排序（預設）
             regionData.sort((a, b) => a.金額排名 - b.金額排名);
             
+            // 初始化總計值
+            let totalOriginalAmount = 0;
+            let totalNewAmount = 0;
+            let totalOldAmount = 0;
+            let totalNewCustomers = 0;
+            let totalOldCustomers = 0;
+            
             regionData.forEach((store) => {
                 const isAmountQualified = store.業績積分門檻達成率 === 'YES';
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
                 const hasNoPerformance = store.amountScore === 0;
+                
+                // 累加總計
+                const originalAmount = store.新客業績 + store.舊客業績;
+                totalOriginalAmount += originalAmount;
+                totalNewAmount += store.新客業績;
+                totalOldAmount += store.舊客業績;
+                totalNewCustomers += store.新客數;
+                totalOldCustomers += store.舊客數;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
@@ -1148,7 +1173,7 @@
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
                     </td>
-                    <td class="number-cell">${formatNumber(store.新客業績 + store.舊客業績)}</td>
+                    <td class="number-cell">${formatNumber(originalAmount)}</td>
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell">${store.新客數}</td>
@@ -1157,6 +1182,35 @@
                 `;
                 tbody.appendChild(row);
             });
+            
+            // 添加總計列
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            const storeCount = regionData.length;
+            const avgOriginalAmount = storeCount > 0 ? Math.round(totalOriginalAmount / storeCount) : 0;
+            
+            totalRow.innerHTML = `
+                <td class="number-cell">-</td>
+                <td class="store-name">總計 (${storeCount}家)</td>
+                <td>-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">
+                    ${formatNumber(totalOriginalAmount)}
+                    <br>
+                    <span style="font-size: 0.85em; color: #666;">
+                        平均: ${formatNumber(avgOriginalAmount)}
+                    </span>
+                </td>
+                <td class="number-cell">${formatNumber(totalNewAmount)}</td>
+                <td class="number-cell">${formatNumber(totalOldAmount)}</td>
+                <td class="number-cell">${totalNewCustomers}</td>
+                <td class="number-cell">${totalOldCustomers}</td>
+                <td class="number-cell">-</td>
+            `;
+            tbody.appendChild(totalRow);
         }
 
         function populateRegionTableWithData(region, data) {
@@ -1164,6 +1218,13 @@
             if (!tbody) return;
             
             tbody.innerHTML = '';
+            
+            // 計算需要加總的欄位
+            let totalOriginalAmount = 0;
+            let totalNewAmount = 0;
+            let totalOldAmount = 0;
+            let totalNewCustomers = 0;
+            let totalOldCustomers = 0;
             
             data.forEach((store) => {
                 const isAmountQualified = store.業績積分門檻達成率 === 'YES';
@@ -1182,6 +1243,14 @@
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
 
+                // 累加總計
+                const originalAmount = store.新客業績 + store.舊客業績;
+                totalOriginalAmount += originalAmount;
+                totalNewAmount += store.新客業績;
+                totalOldAmount += store.舊客業績;
+                totalNewCustomers += store.新客數;
+                totalOldCustomers += store.舊客數;
+
                 row.innerHTML = `
                     <td class="number-cell">${store.金額排名}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -1192,7 +1261,7 @@
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
                     </td>
-                    <td class="number-cell">${formatNumber(store.新客業績 + store.舊客業績)}</td>
+                    <td class="number-cell">${formatNumber(originalAmount)}</td>
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell">${store.新客數}</td>
@@ -1467,6 +1536,26 @@
                 `;
                 tbody.appendChild(row);
             });
+
+            // 添加總計列
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td class="number-cell">-</td>
+                <td class="store-name">總計</td>
+                <td>-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">${formatNumber(totalOriginalAmount)}</td>
+                <td class="number-cell">${formatNumber(totalNewAmount)}</td>
+                <td class="number-cell">${formatNumber(totalOldAmount)}</td>
+                <td class="number-cell">${totalNewCustomers}</td>
+                <td class="number-cell">${totalOldCustomers}</td>
+                <td class="number-cell">-</td>
+            `;
+            tbody.appendChild(totalRow);
         }
 
         // 更新排序資訊
