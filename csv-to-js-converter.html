@@ -351,33 +351,7 @@
                 <div id="fileInfo" class="file-info" style="display: none;"></div>
             </div>
 
-            <!-- 控制選項 -->
-            <div class="controls" id="controls" style="display: none;">
-                <div class="control-group">
-                    <label for="groupMapping">組別對應</label>
-                    <select id="groupMapping">
-                        <option value="組別">組別</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="storeMapping">店名對應</label>
-                    <select id="storeMapping">
-                        <option value="店名">店名</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="regionMapping">區域對應</label>
-                    <select id="regionMapping">
-                        <option value="區域">區域</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label for="amountMapping">業績積分對應</label>
-                    <select id="amountMapping">
-                        <option value="業績積分">業績積分</option>
-                    </select>
-                </div>
-            </div>
+
 
             <!-- 資料預覽 -->
             <div class="preview-section" id="previewSection" style="display: none;">
@@ -476,7 +450,6 @@
                     }
                     
                     csvData = results.data;
-                    setupColumnMapping(results.meta.fields);
                     displayPreview(csvData, results.meta.fields);
                     showToast('CSV檔案載入成功！');
                 },
@@ -487,28 +460,7 @@
         }
 
         function setupColumnMapping(fields) {
-            const mappings = ['groupMapping', 'storeMapping', 'regionMapping', 'amountMapping'];
-            const defaultFields = ['組別', '店名', '區域', '業績積分'];
-
-            mappings.forEach((mappingId, index) => {
-                const select = document.getElementById(mappingId);
-                select.innerHTML = '';
-                
-                fields.forEach(field => {
-                    const option = document.createElement('option');
-                    option.value = field;
-                    option.textContent = field;
-                    
-                    // 自動選擇最佳匹配
-                    if (field.includes(defaultFields[index]) || field === defaultFields[index]) {
-                        option.selected = true;
-                    }
-                    
-                    select.appendChild(option);
-                });
-            });
-
-            document.getElementById('controls').style.display = 'grid';
+            // 直接顯示預覽，不需要對應選擇器
         }
 
         function displayPreview(data, fields) {
@@ -529,26 +481,32 @@
             document.getElementById('actionButtons').style.display = 'flex';
         }
 
+        // 數值解析輔助函數 - 處理千分位逗號
+        function parseNumber(value) {
+            if (value === '' || value === undefined || value === null) {
+                return 0;
+            }
+            
+            // 移除千分位逗號後再解析
+            const cleanValue = String(value).replace(/,/g, '');
+            return parseInt(cleanValue) || 0;
+        }
+
         function convertData() {
             if (csvData.length === 0) {
                 showError('請先載入CSV檔案');
                 return;
             }
 
-            const groupField = document.getElementById('groupMapping').value;
-            const storeField = document.getElementById('storeMapping').value;
-            const regionField = document.getElementById('regionMapping').value;
-            const amountField = document.getElementById('amountMapping').value;
-
             try {
                 const convertedData = csvData.map((row, index) => {
-                    // 基本資料映射
+                    // 基本資料映射 - 直接使用固定欄位名稱
                     const store = {
-                        storeName: row[storeField] || '',
-                        group: row[groupField] || '',
-                        region: row[regionField] || '',
-                        amountScore: parseInt(row[amountField]) || 0,
-                        customerScore: parseInt(row['客戶數積分']) || 0,
+                        storeName: row['店名'] || '',
+                        group: row['組別'] || '',
+                        region: row['區域'] || '',
+                        amountScore: parseNumber(row['業績積分']),
+                        customerScore: parseNumber(row['客戶數積分']),
                     };
 
                     // 設定門檻值
@@ -570,15 +528,18 @@
                             store.customerThreshold = 60;
                     }
 
-                    // 其他欄位
+                    // 其他欄位映射
                     store.中和比例 = row['中和比例'] || '0%';
-                    store.新客業績 = parseInt(row['新客業績(原始)']) || 0;
-                    store.舊客業績 = parseInt(row['舊客業績(原始)']) || 0;
-                    store.新客數 = parseInt(row['新客數']) || 0;
-                    store.舊客數 = parseInt(row['舊客數']) || 0;
-                    store.金額排名 = parseInt(row['金額排名']) || index + 1;
-                    store.客戶數排名 = parseInt(row['客戶數排名']) || index + 1;
-                    store.自我宣告目標 = parseInt(row['自我宣告積分']) || 25000;
+                    
+                    // 修正新客業績欄位抓取 - 處理千分位逗號
+                    store.新客業績 = parseNumber(row['新客業績(原始)']);
+                    
+                    store.舊客業績 = parseNumber(row['舊客業績(原始)']);
+                    store.新客數 = parseNumber(row['新客數']);
+                    store.舊客數 = parseNumber(row['舊客數']);
+                    store.金額排名 = parseNumber(row['金額排名']) || (index + 1);
+                    store.客戶數排名 = parseNumber(row['客戶數排名']) || (index + 1);
+                    store.自我宣告目標 = parseNumber(row['自我宣告積分']) || 25000;
                     store.自我宣告達成率 = row['宣告達成率'] || '0%';
                     store.業績積分門檻達成率 = row['業績積分門檻達成率'] === 'YES' ? 'YES' : 'NO';
                     store.客戶數門檻達成率 = row['客戶數門檻達成率'] === 'YES' ? 'YES' : 'NO';
@@ -601,6 +562,7 @@
                 
             } catch (error) {
                 showError('轉換過程中發生錯誤：' + error.message);
+                console.error('轉換錯誤詳情:', error);
             }
         }
 
@@ -612,24 +574,28 @@
                 客戶達標門市數: data.filter(s => s.客戶數門檻達成率 === 'YES').length,
                 自製達標門市數: data.filter(s => s.自製比門檻達成).length,
                 總業績積分: data.reduce((sum, s) => sum + s.amountScore, 0),
+                原始總業績加總: data.reduce((sum, s) => sum + (s.新客業績 + s.舊客業績), 0),
                 
                 A組: {
                     總數: data.filter(s => s.group === 'A').length,
                     業績達標數: data.filter(s => s.group === 'A' && s.業績積分門檻達成率 === 'YES').length,
                     客戶達標數: data.filter(s => s.group === 'A' && s.客戶數門檻達成率 === 'YES').length,
-                    自製達標數: data.filter(s => s.group === 'A' && s.自製比門檻達成).length
+                    自製達標數: data.filter(s => s.group === 'A' && s.自製比門檻達成).length,
+                    業績積分總合: data.filter(s => s.group === 'A').reduce((sum, s) => sum + s.amountScore, 0)
                 },
                 B組: {
                     總數: data.filter(s => s.group === 'B').length,
                     業績達標數: data.filter(s => s.group === 'B' && s.業績積分門檻達成率 === 'YES').length,
                     客戶達標數: data.filter(s => s.group === 'B' && s.客戶數門檻達成率 === 'YES').length,
-                    自製達標數: data.filter(s => s.group === 'B' && s.自製比門檻達成).length
+                    自製達標數: data.filter(s => s.group === 'B' && s.自製比門檻達成).length,
+                    業績積分總合: data.filter(s => s.group === 'B').reduce((sum, s) => sum + s.amountScore, 0)
                 },
                 C組: {
                     總數: data.filter(s => s.group === 'C').length,
                     業績達標數: data.filter(s => s.group === 'C' && s.業績積分門檻達成率 === 'YES').length,
                     客戶達標數: data.filter(s => s.group === 'C' && s.客戶數門檻達成率 === 'YES').length,
-                    自製達標數: data.filter(s => s.group === 'C' && s.自製比門檻達成).length
+                    自製達標數: data.filter(s => s.group === 'C' && s.自製比門檻達成).length,
+                    業績積分總合: data.filter(s => s.group === 'C').reduce((sum, s) => sum + s.amountScore, 0)
                 }
             };
             
