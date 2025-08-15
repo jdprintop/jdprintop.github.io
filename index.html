@@ -40,6 +40,33 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
+        .statistics-info {
+            margin-top: 0px;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .total-amount {
+            color: #2196f3;
+            font-weight: bold;
+        }
+
+        .baseline {
+            color: #666;
+        }
+
+        .growth-rate {
+            font-weight: bold;
+        }
+
+        .growth-rate.positive {
+            color: #4caf50;
+        }
+
+        .growth-rate.negative {
+            color: #f44336;
+        }
+
         .update-time {
             background: #e3f2fd;
             padding: 12px;
@@ -289,10 +316,10 @@
         }
         
         .threshold-info {
-            font-size: 12px;
+            font-size: 16px;
             color: #6c757d;
             margin-top: 10px;
-            padding: 10px;
+            padding: 2px;
             background: #f8f9fa;
             border-radius: 5px;
         }
@@ -578,7 +605,11 @@
         <!-- 區域分析內容區 -->
         <div id="region-content" class="tab-content">
             <div class="threshold-info">
-                <strong>🌏 區域分析：</strong> 各區域門市業績與客戶數據統計
+                <div class="statistics-info">
+                    <span class="total-amount">門市目前加總發印成本：<span id="total-amount"></span></span> | 
+                    <span class="baseline">2025上半年月均發印成本：300,909</span> | 
+                    <span class="growth-rate">成長率：<span id="growth-rate"></span></span>
+                </div>
             </div>
             
             <!-- 營一 -->
@@ -886,6 +917,7 @@
                     content.classList.remove('active');
                 });
                 document.getElementById('region-營一').classList.add('active');
+                
             }
             
             // 載入對應數據
@@ -1466,6 +1498,19 @@
             }
         }
 
+        // 更新統計資訊
+        function updateStatisticsInfo() {
+            const totalAmount = document.getElementById('total-amount');
+            const growthRate = document.getElementById('growth-rate');
+            
+            if (totalAmount && growthRate && window.competitionStatistics) {
+                totalAmount.textContent = formatNumber(window.competitionStatistics.原始總業績加總);
+                const growth = ((window.competitionStatistics.原始總業績加總 - 300909) / 300909 * 100).toFixed(1);
+                growthRate.textContent = `${growth}%`;
+                growthRate.parentElement.classList.add(growth >= 0 ? 'positive' : 'negative');
+            }
+        }
+
         // 初始化頁面
         document.addEventListener('DOMContentLoaded', function() {
             // 檢查數據是否載入
@@ -1485,6 +1530,7 @@
             // 數據載入成功，初始化頁面
             loadTabContent();
             initializeSorting();
+            updateStatisticsInfo();
         });
     </script>
 </body>
