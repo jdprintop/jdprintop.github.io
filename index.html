@@ -372,6 +372,17 @@
             border-top: 2px solid #dee2e6;
         }
 
+        /* 組別統計信息樣式 */
+        [id$="-stats"] {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #1976d2;
+            background-color: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
         /* 新增達標統計區塊 */
         .achievement-stats {
             background: #fff3e0;
@@ -479,7 +490,9 @@
             <div id="group-a" class="tab-content active">
                 
                 <div class="threshold-info">
-                    <strong>⭐ A組 新星挑戰組：</strong> 業績積分門檻 25,000分 | 客戶數積分門檻 60分 | 14家門市
+                    <strong>⭐ A組 新星挑戰組</strong>
+                    <div id="group-a-stats">載入中...</div>
+                    <div>業績積分門檻 25,000分 | 客戶數積分門檻 60分 | 14家門市</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-a">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -507,7 +520,9 @@
             <div id="group-b" class="tab-content">
             
                 <div class="threshold-info">
-                    <strong>🚀 B組 飛耀成長組：</strong> 業績積分門檻 35,000分 | 客戶數積分門檻 60分 | 15家門市
+                    <strong>🚀 B組 飛耀成長組</strong>
+                    <div id="group-b-stats">載入中...</div>
+                    <div>業績積分門檻 35,000分 | 客戶數積分門檻 60分 | 15家門市</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-b">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -534,7 +549,9 @@
             <div id="group-c" class="tab-content">
                 
                 <div class="threshold-info">
-                    <strong>👑 C組 經典菁英組：</strong> 業績積分門檻 45,000分 | 客戶數積分門檻 30分 | 15家門市
+                    <strong>👑 C組 經典菁英組</strong>
+                    <div id="group-c-stats">載入中...</div>
+                    <div>業績積分門檻 45,000分 | 客戶數積分門檻 30分 | 15家門市</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-c">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -1587,6 +1604,20 @@
             }
         }
 
+        // 更新組別統計資訊
+        function updateGroupStats() {
+            // 計算各組的金額積分總和
+            const groups = ['A', 'B', 'C'];
+            groups.forEach(group => {
+                const groupData = competitionData.filter(store => store.group === group);
+                const totalAmount = groupData.reduce((sum, store) => sum + store.amountScore, 0);
+                const statsElement = document.getElementById(`group-${group.toLowerCase()}-stats`);
+                if (statsElement) {
+                    statsElement.innerHTML = `本期金額積分總合：${formatNumber(totalAmount)}`;
+                }
+            });
+        }
+
         // 更新統計資訊
         function updateStatisticsInfo() {
             const totalAmount = document.getElementById('total-amount');
@@ -1620,6 +1651,7 @@
             loadTabContent();
             initializeSorting();
             updateStatisticsInfo();
+            updateGroupStats();
         });
     </script>
 </body>
