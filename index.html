@@ -163,6 +163,13 @@
             white-space: nowrap;
         }
         
+        .group-tab span {
+            font-weight: normal;
+            opacity: 0.9;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+        
         .group-tab:hover {
             background: #2c3e50;
         }
@@ -461,9 +468,9 @@
             <div class="group-tabs">
                 <!-- 金額積分時顯示的標籤 -->
                 <div id="amount-tabs" class="tab-group active">
-                    <button class="group-tab active" onclick="switchGroupTab('group-a')">⭐ A組 (14家)</button>
-                    <button class="group-tab" onclick="switchGroupTab('group-b')">🚀 B組 (15家)</button>
-                    <button class="group-tab" onclick="switchGroupTab('group-c')">👑 C組 (15家)</button>
+                    <button class="group-tab active" onclick="switchGroupTab('group-a')">⭐ A組-新星挑戰組(14家) | 本期金額積分總合：<span id="group-a-amount">載入中...</span></button>
+                    <button class="group-tab" onclick="switchGroupTab('group-b')">🚀 B組-飛耀成長組(15家) | 本期金額積分總合：<span id="group-b-amount">載入中...</span></button>
+                    <button class="group-tab" onclick="switchGroupTab('group-c')">👑 C組-經典菁英組(15家) | 本期金額積分總合：<span id="group-c-amount">載入中...</span></button>
                 </div>
                 
                 <!-- 客戶數積分時顯示的標籤 -->
@@ -490,9 +497,7 @@
             <div id="group-a" class="tab-content active">
                 
                 <div class="threshold-info">
-                    <strong>⭐ A組 新星挑戰組</strong>
-                    <div id="group-a-stats">載入中...</div>
-                    <div>業績積分門檻 25,000分 | 客戶數積分門檻 60分 | 14家門市</div>
+                    <div>業績積分門檻 25,000分 | 客戶數積分門檻 60分</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-a">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -520,9 +525,7 @@
             <div id="group-b" class="tab-content">
             
                 <div class="threshold-info">
-                    <strong>🚀 B組 飛耀成長組</strong>
-                    <div id="group-b-stats">載入中...</div>
-                    <div>業績積分門檻 35,000分 | 客戶數積分門檻 60分 | 15家門市</div>
+                    <div>業績積分門檻 35,000分 | 客戶數積分門檻 60分</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-b">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -549,9 +552,7 @@
             <div id="group-c" class="tab-content">
                 
                 <div class="threshold-info">
-                    <strong>👑 C組 經典菁英組</strong>
-                    <div id="group-c-stats">載入中...</div>
-                    <div>業績積分門檻 45,000分 | 客戶數積分門檻 30分 | 15家門市</div>
+                    <div>業績積分門檻 45,000分 | 客戶數積分門檻 30分</div>
                 </div>
                 <div class="sort-info" id="sort-info-group-c">目前排序：依金額排名 (固定)</div>
                 <div class="table-container">
@@ -1611,9 +1612,15 @@
             groups.forEach(group => {
                 const groupData = competitionData.filter(store => store.group === group);
                 const totalAmount = groupData.reduce((sum, store) => sum + store.amountScore, 0);
+                // 更新組別標籤中的金額總和
+                const amountElement = document.getElementById(`group-${group.toLowerCase()}-amount`);
+                if (amountElement) {
+                    amountElement.textContent = formatNumber(totalAmount);
+                }
+                // 隱藏原有的統計區塊
                 const statsElement = document.getElementById(`group-${group.toLowerCase()}-stats`);
                 if (statsElement) {
-                    statsElement.innerHTML = `本期金額積分總合：${formatNumber(totalAmount)}`;
+                    statsElement.style.display = 'none';
                 }
             });
         }
