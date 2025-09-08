@@ -513,6 +513,7 @@
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="augustScore">8月積分</th>
                             </tr>
                         </thead>
                         <tbody id="group-a-table">
@@ -541,6 +542,7 @@
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="augustScore">8月積分</th>
                             </tr>
                         </thead>
                         <tbody id="group-b-table">
@@ -568,6 +570,7 @@
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="augustScore">8月積分</th>
                             </tr>
                         </thead>
                         <tbody id="group-c-table">
@@ -839,7 +842,22 @@
     </div>
     
     <!-- 引入外部數據文件 -->
-    <script src="competition-data.js"></script>
+    <script>
+        // 當腳本載入完成時的處理函數
+        function onScriptsLoaded() {
+            if (typeof competitionData !== 'undefined' && typeof augustCompetitionData !== 'undefined') {
+                initializePage();
+            }
+        }
+
+        // 初始化頁面
+        function initializePage() {
+            currentMainTab = 'amount';
+            switchMainTab('amount');
+        }
+    </script>
+    <script src="competition-data.js" onload="onScriptsLoaded()"></script>
+    <script src="competition-data-aug.js" onload="onScriptsLoaded()"></script>
     
     <script>
         // 當前活動分頁
@@ -1041,6 +1059,13 @@
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
+                // 計算八月份是否達成組合金額門檻，並準備顯示內容
+                const augScore = getAugustScore(store.storeName);
+                const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
+                const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
+                const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
+                const augHtml = `<span class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</span>`;
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -1053,6 +1078,7 @@
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td>${augHtml}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1097,7 +1123,6 @@
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-
                 `;
                 tbody.appendChild(row);
             });
@@ -1397,6 +1422,13 @@
                         valueA = parseFloat(a.中和比例.replace('%', ''));
                         valueB = parseFloat(b.中和比例.replace('%', ''));
                         break;
+                    case 'augustScore':
+                        // 直接獲取8月份的金額積分
+                        const augustStoreA = augustCompetitionData.find(store => store.storeName === a.storeName);
+                        const augustStoreB = augustCompetitionData.find(store => store.storeName === b.storeName);
+                        valueA = augustStoreA ? augustStoreA.amountScore : -1;
+                        valueB = augustStoreB ? augustStoreB.amountScore : -1;
+                        break;
                     default:
                         return 0;
                 }
@@ -1458,6 +1490,13 @@
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
+                // 計算八月份是否達成組合金額門檻，並準備顯示內容
+                const augScore = getAugustScore(store.storeName);
+                const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
+                const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
+                const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
+                const augHtml = `<span class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</span>`;
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -1470,6 +1509,7 @@
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td>${augHtml}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1638,27 +1678,68 @@
             }
         }
 
-        // 初始化頁面
+        // 獲取8月份的金額積分
+        function getAugustScore(storeName) {
+            try {
+                if (typeof augustCompetitionData === 'undefined') {
+                    console.error('augustCompetitionData is undefined');
+                    return '-';
+                }
+                if (!Array.isArray(augustCompetitionData)) {
+                    console.error('augustCompetitionData is not an array:', augustCompetitionData);
+                    return '-';
+                }
+                console.log('Looking for store:', storeName, 'in', augustCompetitionData.length, 'stores');
+                const augustStore = augustCompetitionData.find(store => store.storeName === storeName);
+                if (!augustStore) {
+                    console.log('Store not found:', storeName);
+                    return '-';
+                }
+                const score = augustStore.amountScore;
+                console.log('Found score:', score, 'for store:', storeName);
+                return score;
+            } catch (error) {
+                console.error('Error in getAugustScore:', error);
+                return '-';
+            }
+        }
+
+        // 初始化頁面（在 DOMContentLoaded 後執行）
         document.addEventListener('DOMContentLoaded', function() {
-            // 檢查數據是否載入
-            if (typeof competitionData === 'undefined') {
-                console.error('競賽數據未載入，請確保 competition-data.js 文件正確載入');
-                // 顯示錯誤訊息給用戶
+            console.log('DOM ready — initializing page');
+
+            // 基本檢查：確保資料檔已由<script>載入
+            const missing = [];
+            if (typeof competitionData === 'undefined') missing.push('competition-data.js');
+            if (typeof augustCompetitionData === 'undefined') missing.push('competition-data-aug.js');
+
+            if (missing.length) {
+                console.error('Missing data files:', missing.join(', '));
                 document.querySelector('.container').innerHTML = `
                     <div style="padding: 50px; text-align: center; color: #e74c3c;">
                         <h2>❌ 數據載入失敗</h2>
-                        <p>無法載入競賽數據，請檢查 competition-data.js 文件是否存在且格式正確。</p>
-                        <p>請確保該文件與 HTML 文件在同一目錄下。</p>
+                        <p>缺少下列資料檔：${missing.join(', ')}</p>
+                        <p>請確認這些檔案與 HTML 位於同一目錄，並正確載入。</p>
                     </div>
                 `;
                 return;
             }
-            
-            // 數據載入成功，初始化頁面
-            loadTabContent();
-            initializeSorting();
-            updateStatisticsInfo();
-            updateGroupStats();
+
+            // 一切正常：載入初始畫面與功能
+            try {
+                loadTabContent();
+                initializeSorting();
+                updateStatisticsInfo();
+                updateGroupStats();
+            } catch (err) {
+                console.error('Error during initialization:', err);
+                document.querySelector('.container').innerHTML = `
+                    <div style="padding: 50px; text-align: center; color: #e74c3c;">
+                        <h2>❌ 初始化失敗</h2>
+                        <pre style="text-align:left; max-width:800px; margin:0 auto;">${err}</pre>
+                    </div>
+                `;
+            }
         });
     </script>
 </body>
