@@ -507,13 +507,14 @@
                                 <th class="sortable" data-field="金額排名">金額排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
-                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th class="sortable" data-field="augustScore">8月金額積分</th>
+                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
-                                <th class="sortable" data-field="augustScore">8月積分</th>
                             </tr>
                         </thead>
                         <tbody id="group-a-table">
@@ -536,13 +537,15 @@
                                 <th class="sortable" data-field="金額排名">金額排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
-                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th class="sortable" data-field="augustScore">8月金額積分</th>
+                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
-                                <th class="sortable" data-field="augustScore">8月積分</th>
+                                
                             </tr>
                         </thead>
                         <tbody id="group-b-table">
@@ -564,13 +567,15 @@
                                 <th class="sortable" data-field="金額排名">金額排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
-                                <th class="sortable" data-field="amountScore">金額積分</th>
+                                <th class="sortable" data-field="augustScore">8月金額積分</th>
+                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
                                 <th class="sortable" data-field="新客業績">新客業績</th>
                                 <th class="sortable" data-field="舊客業績">舊客業績</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th>
-                                <th class="sortable" data-field="augustScore">8月積分</th>
+                                
                             </tr>
                         </thead>
                         <tbody id="group-c-table">
@@ -905,6 +910,24 @@
             return num.toLocaleString();
         }
 
+        // 根據組別判定業績積分是否達標：A>=25000, B>=35000, C>=45000
+        function isAmountQualifiedForStore(store) {
+            const group = (store.group || '').toString().toUpperCase();
+            const thresholds = { 'A': 25000, 'B': 35000, 'C': 45000 };
+            const threshold = thresholds[group] || 0;
+            const score = Number(store.amountScore) || 0;
+            return score >= threshold;
+        }
+
+        // 判定任意 score 是否達到該店組別門檻
+        function isScoreQualifiedForStore(store, score) {
+            const group = (store.group || '').toString().toUpperCase();
+            const thresholds = { 'A': 25000, 'B': 35000, 'C': 45000 };
+            const threshold = thresholds[group] || 0;
+            const s = Number(score) || 0;
+            return s >= threshold;
+        }
+
         function switchMainTab(tab) {
             currentMainTab = tab;
             
@@ -1041,7 +1064,7 @@
             groupData.sort((a, b) => a.金額排名 - b.金額排名);
             
             groupData.forEach((store) => {
-                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
@@ -1059,18 +1082,27 @@
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
-                // 計算八月份是否達成組合金額門檻，並準備顯示內容
+                // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
                 const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
                 const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
                 const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
-                const augHtml = `<span class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</span>`;
+
+                const septScore = store.amountScore;
+                const isSeptQualified = isAmountQualified;
+                const septDisplay = formatNumber(septScore);
+
+                const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
+                const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
+                const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</td>
+                    <td class="number-cell ${isSeptQualified ? 'qualified' : ''}">${septDisplay}</td>
+                    <td class="number-cell ${isAvgQualified ? 'qualified' : ''}">${avgDisplay}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
@@ -1078,7 +1110,6 @@
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-                    <td>${augHtml}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1188,7 +1219,7 @@
             let totalOldCustomers = 0;
             
             regionData.forEach((store) => {
-                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isAmountQualified = isAmountQualifiedForStore(store);
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
                 const hasNoPerformance = store.amountScore === 0;
                 
@@ -1270,7 +1301,7 @@
             let totalOldCustomers = 0;
             
             data.forEach((store) => {
-                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isAmountQualified = isAmountQualifiedForStore(store);
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
                 const hasNoPerformance = store.amountScore === 0;
                 
@@ -1429,6 +1460,15 @@
                         valueA = augustStoreA ? augustStoreA.amountScore : -1;
                         valueB = augustStoreB ? augustStoreB.amountScore : -1;
                         break;
+                    case 'avgScore':
+                        // 平均：若有8月數據則取(8月 + 9月)/2，否則只用9月
+                        const aAug = (augustCompetitionData.find(s => s.storeName === a.storeName) || {}).amountScore;
+                        const bAug = (augustCompetitionData.find(s => s.storeName === b.storeName) || {}).amountScore;
+                        const aSept = a.amountScore || 0;
+                        const bSept = b.amountScore || 0;
+                        valueA = (typeof aAug === 'number') ? Math.round((aAug + aSept) / 2) : aSept;
+                        valueB = (typeof bAug === 'number') ? Math.round((bAug + bSept) / 2) : bSept;
+                        break;
                     default:
                         return 0;
                 }
@@ -1472,7 +1512,7 @@
             tbody.innerHTML = '';
             
             data.forEach((store) => {
-                const isAmountQualified = store.業績積分門檻達成率 === 'YES';
+                const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
@@ -1490,18 +1530,26 @@
                     ? getRankMedal(store.金額排名) 
                     : store.金額排名;
                 
-                // 計算八月份是否達成組合金額門檻，並準備顯示內容
+                // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
-                const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
-                const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
+                const isAugQualified = isAmountQualified;
                 const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
-                const augHtml = `<span class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</span>`;
+
+                const septScore = store.amountScore;
+                const isSeptQualified = isAmountQualified;
+                const septDisplay = formatNumber(septScore);
+
+                const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
+                const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
+                const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAmountQualified ? 'qualified' : ''}">${formatNumber(store.amountScore)}</td>
+                    <td class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</td>
+                    <td class="number-cell ${isSeptQualified ? 'qualified' : ''}">${septDisplay}</td>
+                    <td class="number-cell ${isAvgQualified ? 'qualified' : ''}">${avgDisplay}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
                         <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
@@ -1509,7 +1557,6 @@
                     <td class="number-cell">${formatNumber(store.新客業績)}</td>
                     <td class="number-cell">${formatNumber(store.舊客業績)}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-                    <td>${augHtml}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1622,8 +1669,9 @@
                 'storeName': '門市名稱',
                 'region': '區域',
                 'group': '組別',
-                'amountScore': '金額積分',
-                'augustScore': '8月積分',
+                'amountScore': '9月金額積分',
+                'augustScore': '8月金額積分',
+                'avgScore': '平均積分',
                 'customerScore': '客戶數積分',
                 '新客業績': '新客業績',
                 '舊客業績': '舊客業績',
