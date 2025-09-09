@@ -67,11 +67,10 @@
 
         .update-time {
             background: #e3f2fd;
-            padding: 12px;
+            padding: 5px;
             text-align: center;
             font-weight: bold;
             color: #1976d2;
-            border-bottom: 2px solid #2196f3;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -87,7 +86,7 @@
         /* 主導航 - 金額積分 vs 客戶數積分 */
         .main-nav {
             display: flex;
-            background: #34495e;
+            background: #595959;
             color: white;
             overflow: hidden;
         }
@@ -102,17 +101,17 @@
             transition: all 0.3s ease;
             position: relative;
             border: none;
-            background: #34495e;
+            background: #595959;
             color: white;
         }
         
         .main-nav-item:hover {
-            background: #2c3e50;
+            background: #323232;
         }
         
         .main-nav-item.active {
-            background: #3498db;
-            border-bottom: 3px solid #e74c3c;
+            background: #909090;
+            border-bottom: 3px solid #ffdd00;
         }
         
         .main-nav-item:not(:last-child)::after {
@@ -127,8 +126,7 @@
         
         /* 子導航 - 組別選擇 */
         .sub-nav {
-            background: #34495e;
-            border-bottom: 1px solid #2c3e50;
+            background: #979797;
             padding: 0;
         }
         
@@ -151,7 +149,7 @@
         
         .group-tab {
             padding: 4px 20px;
-            background: #34495e;
+            background: #979797;
             color: white;
             border: none;
             border-bottom: 3px solid transparent;
@@ -174,7 +172,7 @@
         
         .group-tab.active {
             background: #3498db;
-            border-bottom-color: #e74c3c;
+            border-bottom-color: #ffdd00;
         }
         
         .tab-content {
@@ -480,15 +478,15 @@
             <div class="group-tabs">
                 <!-- 金額積分時顯示的標籤 -->
                 <div id="amount-tabs" class="tab-group active">
-                    <button class="group-tab active" onclick="switchGroupTab('group-a')">⭐ A組-新星挑戰組(14家) | 本期金額積分總合：<span id="group-a-amount">載入中...</span></button>
-                    <button class="group-tab" onclick="switchGroupTab('group-b')">🚀 B組-飛耀成長組(15家) | 本期金額積分總合：<span id="group-b-amount">載入中...</span></button>
-                    <button class="group-tab" onclick="switchGroupTab('group-c')">👑 C組-經典菁英組(15家) | 本期金額積分總合：<span id="group-c-amount">載入中...</span></button>
+                    <button class="group-tab active" onclick="switchGroupTab('group-a')">⭐ A組-新星挑戰組(門檻:25000) | 本期金額積分總合：<span id="group-a-amount">載入中...</span></button>
+                    <button class="group-tab" onclick="switchGroupTab('group-b')">🚀 B組-飛耀成長組(門檻：35000) | 本期金額積分總合：<span id="group-b-amount">載入中...</span></button>
+                    <button class="group-tab" onclick="switchGroupTab('group-c')">👑 C組-經典菁英組(門檻：45000) | 本期金額積分總合：<span id="group-c-amount">載入中...</span></button>
                 </div>
                 
                 <!-- 客戶數積分時顯示的標籤 -->
                 <div id="customer-tabs" class="tab-group">
-                    <button class="group-tab active" onclick="switchGroupTab('customer-ab')">⭐🚀 A+B組合併分賽</button>
-                    <button class="group-tab" onclick="switchGroupTab('customer-c')">👑 C組分賽</button>
+                    <button class="group-tab active" onclick="switchGroupTab('customer-ab')">⭐🚀 A+B組合併分賽(積分門檻:60分)</button>
+                    <button class="group-tab" onclick="switchGroupTab('customer-c')">👑 C組分賽(積分門檻30分)</button>
                 </div>
                 <!-- 區域分析時顯示的標籤 -->
                 <div id="region-tabs" class="tab-group">
@@ -586,12 +584,7 @@
         </div>
         
         <!-- 客戶數積分內容區 -->
-        <div id="customer-content" class="tab-content">
-            <div class="threshold-info">
-                <strong>👥 客戶數積分競賽：</strong> A+B組合併競賽(客戶數積分門檻：60分) | C組獨立競賽(客戶數積分門檻：30分)<br>
-                <strong>📊 積分計算：</strong> 客戶積分 = 舊客數×1 + 新客數×3
-            </div>
-            
+        <div id="customer-content" class="tab-content">            
             <!-- A+B組合併分賽 -->
             <div id="customer-ab" class="tab-content active">
                 <div class="sort-info">目前排序：依客戶數排名 (固定)</div>
