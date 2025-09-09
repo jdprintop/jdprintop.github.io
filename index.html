@@ -255,9 +255,7 @@
             transition: all 0.2s ease;
         }
         
-        .rank-1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%) !important; font-weight: bold; }
-        .rank-2 { background: linear-gradient(135deg, #c0c0c0 0%, #dcdcdc 100%) !important; font-weight: bold; }
-        .rank-3 { background: linear-gradient(135deg, #ffdbb6 0%, #daa520 100%) !important; font-weight: bold; }
+        .rank-1, .rank-2, .rank-3 { font-weight: bold; }
         
         .group-a { border-left: 4px solid #2196F3; }
         .group-b { border-left: 4px solid #FF9800; }
@@ -267,7 +265,14 @@
         .score-good { color: #f39c12; font-weight: bold; }
         .score-poor { color: #e74c3c; }
         
-        .no-performance { background-color: #fff3cd !important; opacity: 0.8; }
+        .performance-status {
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            background: #f8d7da;
+            color: #721c24;
+        }
         
         .store-name {
             font-weight: bold;
@@ -346,6 +351,15 @@
             font-weight: bold;
             padding: 2px 4px;
             border-radius: 3px;
+        }
+
+        .performance-status {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background-color: #fff3cd;
+            color: #856404;
+            font-size: 0.9em;
         }
         
         .rate-excellent { background: #d4edda; color: #155724; }
@@ -499,7 +513,7 @@
                 <div class="threshold-info">
                     <div>業績積分門檻 25,000分 | 客戶數積分門檻 60分</div>
                 </div>
-                <div class="sort-info" id="sort-info-group-a">目前排序：依金額排名 (固定)</div>
+                <div class="sort-info" id="sort-info-group-a">目前排序：依平均積分排名</div>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -529,12 +543,12 @@
                 <div class="threshold-info">
                     <div>業績積分門檻 35,000分 | 客戶數積分門檻 60分</div>
                 </div>
-                <div class="sort-info" id="sort-info-group-b">目前排序：依金額排名 (固定)</div>
+                <div class="sort-info" id="sort-info-group-b">目前排序：依平均積分排名</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="金額排名">金額排名</th>
+                                <th class="sortable" data-field="金額排名">平均積分排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
@@ -559,12 +573,12 @@
                 <div class="threshold-info">
                     <div>業績積分門檻 45,000分 | 客戶數積分門檻 30分</div>
                 </div>
-                <div class="sort-info" id="sort-info-group-c">目前排序：依金額排名 (固定)</div>
+                <div class="sort-info" id="sort-info-group-c">目前排序：依平均積分排名</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="金額排名">金額排名</th>
+                                <th class="sortable" data-field="金額排名">平均積分排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
@@ -588,7 +602,7 @@
         <!-- 客戶數積分內容區 -->
         <div id="customer-content" class="tab-content">
             <div class="threshold-info">
-                <strong>👥 客戶數積分競賽：</strong> A+B組合併競賽 | C組獨立競賽<br>
+                <strong>👥 客戶數積分競賽：</strong> A+B組合併競賽(客戶數積分門檻：60分) | C組獨立競賽(客戶數積分門檻：30分)<br>
                 <strong>📊 積分計算：</strong> 客戶積分 = 舊客數×1 + 新客數×3
             </div>
             
@@ -928,6 +942,33 @@
             return s >= threshold;
         }
 
+        // 計算每家門市的平均積分並回傳標準競賽排名（同分同名次，下一名次數量減少）
+        // 輸入 data 為該組的 store 陣列，回傳物件 map: { storeName: rank }
+        function computeAvgRankMap(data) {
+            // 建立包含 avg 的暫存陣列
+            const arr = data.map(s => {
+                const aug = getAugustScore(s.storeName);
+                const sept = s.amountScore || 0;
+                const avg = (typeof aug === 'number') ? Math.round((aug + sept) / 2) : sept;
+                return { storeName: s.storeName, avg };
+            });
+
+            // 依 avg 降序排列（分數大排前）
+            arr.sort((a, b) => b.avg - a.avg);
+
+            const rankMap = {};
+            for (let i = 0; i < arr.length; i++) {
+                if (i > 0 && arr[i].avg === arr[i - 1].avg) {
+                    // 同分同名次
+                    rankMap[arr[i].storeName] = rankMap[arr[i - 1].storeName];
+                } else {
+                    // 標準競賽排名：排名為索引+1（因此上方三人同列1，下一名為4）
+                    rankMap[arr[i].storeName] = i + 1;
+                }
+            }
+            return rankMap;
+        }
+
         function switchMainTab(tab) {
             currentMainTab = tab;
             
@@ -1058,17 +1099,21 @@
             if (!tbody) return;
             
             tbody.innerHTML = '';
-            
+
             const groupData = competitionData.filter(store => store.group === group);
-            // 按金額排名排序（預設）
-            groupData.sort((a, b) => a.金額排名 - b.金額排名);
+            // 以平均積分排序（預設）並計算排名映射
+            const rankMap = computeAvgRankMap(groupData);
+            groupData.sort((a, b) => {
+                const aAvg = (typeof getAugustScore(a.storeName) === 'number') ? Math.round((getAugustScore(a.storeName) + (a.amountScore || 0)) / 2) : (a.amountScore || 0);
+                const bAvg = (typeof getAugustScore(b.storeName) === 'number') ? Math.round((getAugustScore(b.storeName) + (b.amountScore || 0)) / 2) : (b.amountScore || 0);
+                return bAvg - aAvg; // 高分在前
+            });
             
             groupData.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
-                if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
                 if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.金額排名}`;
@@ -1077,10 +1122,11 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 
-                // 始終顯示原始金額排名，不受排序影響
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.金額排名) 
-                    : store.金額排名;
+                // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
+                const avgRank = rankMap[store.storeName] || store.金額排名;
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && avgRank <= 3 && !hasNoPerformance)
+                    ? getRankMedal(avgRank)
+                    : avgRank;
                 
                 // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
@@ -1090,7 +1136,7 @@
 
                 const septScore = store.amountScore;
                 const isSeptQualified = isAmountQualified;
-                const septDisplay = formatNumber(septScore);
+                const septDisplay = hasNoPerformance ? '<span class="performance-status">尚無積分</span>' : formatNumber(septScore);
 
                 const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
                 const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
@@ -1300,6 +1346,9 @@
             let totalNewCustomers = 0;
             let totalOldCustomers = 0;
             
+            // 計算該 data 的平均排名映射（用於排序後的顯示）
+            const rankMap = computeAvgRankMap(data);
+
             data.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
                 const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
@@ -1511,12 +1560,14 @@
             
             tbody.innerHTML = '';
             
+            // 計算該 data 的平均排名映射（用於排序後的顯示）
+            const rankMap = computeAvgRankMap(data);
+            
             data.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
-                if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
                 if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
                     rowClass += ` rank-${store.金額排名}`;
@@ -1525,10 +1576,11 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 
-                // 始終顯示原始金額排名，不受排序影響
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.金額排名) 
-                    : store.金額排名;
+                // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
+                const avgRank = rankMap[store.storeName] || store.金額排名;
+                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && avgRank <= 3 && !hasNoPerformance)
+                    ? getRankMedal(avgRank)
+                    : avgRank;
                 
                 // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
