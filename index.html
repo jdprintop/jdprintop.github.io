@@ -588,16 +588,18 @@
         <div id="customer-content" class="tab-content">            
             <!-- A+B組合併分賽 -->
             <div id="customer-ab" class="tab-content active">
-                <div class="sort-info">目前排序：依客戶數排名 (固定)</div>
+                <div class="sort-info">目前排序：依平均客戶數排名 (固定)</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="客戶數排名">客戶數排名</th>
+                                <th class="sortable" data-field="customerAvgRank">客戶數積分平均排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="group">組別</th>
                                 <th class="sortable" data-field="region">區域</th>
-                                <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                <th class="sortable" data-field="augustCustomerScore">8月客戶數積分</th>
+                                <th class="sortable" data-field="customerScore">9月客戶數積分</th>
+                                <th class="sortable" data-field="averageCustomerScore">平均客戶數積分</th>
                                 <th class="sortable" data-field="新客數">新客數</th>
                                 <th class="sortable" data-field="舊客數">舊客數</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th> 
@@ -611,16 +613,18 @@
             
             <!-- C組獨立分賽 -->
             <div id="customer-c" class="tab-content">
-                <div class="sort-info">目前排序：依客戶數排名 (固定)</div>
+                <div class="sort-info">目前排序：依平均客戶數排名 (固定)</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="客戶數排名">客戶數排名</th>
+                                <th class="sortable" data-field="customerAvgRank">客戶數積分平均排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="group">組別</th>
                                 <th class="sortable" data-field="region">區域</th>
-                                <th class="sortable" data-field="customerScore">客戶數積分</th>
+                                <th class="sortable" data-field="augustCustomerScore">8月客戶數積分</th>
+                                <th class="sortable" data-field="customerScore">9月客戶數積分</th>
+                                <th class="sortable" data-field="averageCustomerScore">平均客戶數積分</th>
                                 <th class="sortable" data-field="新客數">新客數</th>
                                 <th class="sortable" data-field="舊客數">舊客數</th>
                                 <th class="sortable" data-field="中和比例">中和發包比例</th> 
@@ -940,6 +944,37 @@
             return rankMap;
         }
 
+        // 計算客戶數平均積分排名（同分同名次，下一名次數量減少）
+        function computeCustomerAvgRankMap(data) {
+            // 建立包含平均客戶數積分的暫存陣列
+            const arr = data.map(s => {
+                const avgScore = getAverageCustomerScore(s.storeName);
+                return { storeName: s.storeName, avgScore };
+            });
+
+            // 依平均積分降序排列（分數大排前）
+            arr.sort((a, b) => b.avgScore - a.avgScore);
+
+            const rankMap = {};
+            let currentRank = 1;
+            let currentScore = arr[0]?.avgScore;
+            let sameRankCount = 0;
+
+            arr.forEach((item, index) => {
+                if (item.avgScore === currentScore) {
+                    rankMap[item.storeName] = currentRank;
+                    sameRankCount++;
+                } else {
+                    currentRank += sameRankCount;
+                    currentScore = item.avgScore;
+                    sameRankCount = 1;
+                    rankMap[item.storeName] = currentRank;
+                }
+            });
+
+            return rankMap;
+        }
+
         function switchMainTab(tab) {
             currentMainTab = tab;
             
@@ -1040,8 +1075,7 @@
         }
 
         function loadTabContent() {
-            // 重置排序狀態
-            currentSort = { field: null, direction: 'asc' };
+            // 設定初始排序狀態，並清除所有排序標記
             document.querySelectorAll('th.sortable').forEach(th => {
                 th.classList.remove('sort-asc', 'sort-desc');
             });
@@ -1049,168 +1083,117 @@
             if (currentMainTab === 'amount') {
                 if (currentGroupTab.startsWith('group-')) {
                     const group = currentGroupTab.replace('group-', '').toUpperCase();
-                    populateGroupTable(group);
+                    // 篩選出該組的資料
+                    const groupData = competitionData.filter(store => store.group === group);
+                    
+                    // 設置初始排序為平均積分排名（降序）
+                    currentSort = { field: 'avgRank', direction: 'desc' };
+                    // 找到對應的表頭並添加排序標記
+                    const header = document.querySelector(`#${currentGroupTab} th[data-field="avgRank"]`);
+                    if (header) header.classList.add('sort-desc');
+                    
+                    // 按平均積分排序並顯示
+                    sortTable('avgRank', header);
                 }
             } else if (currentMainTab === 'customer') {
                 if (currentGroupTab === 'customer-ab') {
-                    populateCustomerABTable();
+                    // 篩選A+B組數據
+                    const abGroupData = competitionData.filter(store => store.group === 'A' || store.group === 'B');
+                    
+                    // 設置初始排序為平均客戶數排名（降序）
+                    currentSort = { field: 'customerAvgRank', direction: 'desc' };
+                    // 找到對應的表頭並添加排序標記
+                    const header = document.querySelector('#customer-ab th[data-field="customerAvgRank"]');
+                    if (header) header.classList.add('sort-desc');
+                    
+                    // 按客戶數平均排名排序並顯示
+                    sortTable('customerAvgRank', header);
                 } else if (currentGroupTab === 'customer-c') {
-                    populateCustomerCTable();
+                    // 篩選C組數據
+                    const cGroupData = competitionData.filter(store => store.group === 'C');
+                    
+                    // 設置初始排序為平均客戶數排名（降序）
+                    currentSort = { field: 'customerAvgRank', direction: 'desc' };
+                    // 找到對應的表頭並添加排序標記
+                    const header = document.querySelector('#customer-c th[data-field="customerAvgRank"]');
+                    if (header) header.classList.add('sort-desc');
+                    
+                    // 按客戶數平均排名排序並顯示
+                    sortTable('customerAvgRank', header);
                 }
             } else if (currentMainTab === 'region') {
                 if (currentGroupTab.startsWith('region-')) {
                     const region = currentGroupTab.replace('region-', '');
-                    populateRegionTable(region);
+                    // 篩選出該區域的資料
+                    const regionData = competitionData.filter(store => store.region === region);
+                    
+                    // 設置初始排序為金額排名
+                    currentSort = { field: '金額排名', direction: 'asc' };
+                    // 找到對應的表頭並添加排序標記
+                    const header = document.querySelector(`#${currentGroupTab} th[data-field="金額排名"]`);
+                    if (header) header.classList.add('sort-asc');
+                    
+                    populateRegionTableWithData(region, regionData);
                 }
             }
         }
 
         function populateGroupTable(group) {
-            const tbody = document.getElementById(`group-${group.toLowerCase()}-table`);
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-
             const groupData = competitionData.filter(store => store.group === group);
-            // 以平均積分排序（預設）並計算排名映射
-            const rankMap = computeAvgRankMap(groupData);
-            groupData.sort((a, b) => {
-                const aAvg = (typeof getAugustScore(a.storeName) === 'number') ? Math.round((getAugustScore(a.storeName) + (a.amountScore || 0)) / 2) : (a.amountScore || 0);
-                const bAvg = (typeof getAugustScore(b.storeName) === 'number') ? Math.round((getAugustScore(b.storeName) + (b.amountScore || 0)) / 2) : (b.amountScore || 0);
-                return bAvg - aAvg; // 高分在前
+            
+            // 計算平均積分並排序
+            const avgScores = new Map();
+            groupData.forEach(store => {
+                const augScore = getAugustScore(store.storeName);
+                const septScore = store.amountScore || 0;
+                const avgScore = (typeof augScore === 'number') ? 
+                    Math.round((augScore + septScore) / 2) : 
+                    septScore;
+                avgScores.set(store.storeName, avgScore);
             });
             
-            groupData.forEach((store) => {
-                const isAmountQualified = isAmountQualifiedForStore(store);
-                const hasNoPerformance = store.amountScore === 0;
-                
-                let rowClass = `group-${store.group.toLowerCase()}`;
-                // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.金額排名}`;
-                }
-                
-                const row = document.createElement('tr');
-                row.className = rowClass;
-                
-                // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
-                const avgRank = rankMap[store.storeName] || store.金額排名;
-                const rankDisplay = avgRank;
-                
-                // 取得八月份積分，計算平均
-                const augScore = getAugustScore(store.storeName);
-                const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
-                const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
-                const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
-
-                const septScore = store.amountScore;
-                const isSeptQualified = isAmountQualified;
-                const septDisplay = hasNoPerformance ? '<span class="performance-status">尚無積分</span>' : formatNumber(septScore);
-
-                const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
-                const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
-                const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
-
-                row.innerHTML = `
-                    <td class="number-cell">${rankDisplay}</td>
-                    <td class="store-name">${store.storeName}</td>
-                    <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</td>
-                    <td class="number-cell ${isSeptQualified ? 'qualified' : ''}">${septDisplay}</td>
-                    <td class="number-cell ${isAvgQualified ? 'qualified' : ''}">${avgDisplay}</td>
-                    <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
-                    <td class="number-cell">
-                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
-                    </td>
-                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
-                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
+            // 依平均積分由高到低排序
+            if (!currentSort.field || currentSort.field === '金額排名' || currentSort.field === 'avgRank') {
+                groupData.sort((a, b) => {
+                    const aScore = avgScores.get(a.storeName);
+                    const bScore = avgScores.get(b.storeName);
+                    return currentSort.direction === 'asc' ? aScore - bScore : bScore - aScore;
+                });
+            } else {
+                groupData.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch (currentSort.field) {
+                        case '客戶數排名':
+                            aValue = (typeof getAugustCustomerScore(a.storeName) === 'number') ? 
+                                Math.round((getAugustCustomerScore(a.storeName) + (a.customerScore || 0)) / 2) : 
+                                (a.customerScore || 0);
+                            bValue = (typeof getAugustCustomerScore(b.storeName) === 'number') ? 
+                                Math.round((getAugustCustomerScore(b.storeName) + (b.customerScore || 0)) / 2) : 
+                                (b.customerScore || 0);
+                            break;
+                        default:
+                            aValue = a[currentSort.field] || 0;
+                            bValue = b[currentSort.field] || 0;
+                    }
+                    
+                    return currentSort.direction === 'desc' ? bValue - aValue : aValue - bValue;
+                });
+            }
+            
+            populateGroupTableWithData(group, groupData);
         }
 
         function populateCustomerABTable() {
-            const tbody = document.getElementById('customer-ab-table');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-            
             // 篩選A+B組數據
             const abGroupData = competitionData.filter(store => store.group === 'A' || store.group === 'B');
-            // 按客戶數排名排序（預設）
-            abGroupData.sort((a, b) => a.客戶數排名 - b.客戶數排名);
-            
-            abGroupData.forEach((store) => {
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
-                const hasNoPerformance = store.customerScore === 0;
-
-                let rowClass = `group-${store.group.toLowerCase()}`;
-                if (hasNoPerformance) rowClass += ' no-performance';
-                // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.客戶數排名}`;
-                }
-
-                const row = document.createElement('tr'); 
-                row.className = rowClass;
-
-                // 始終顯示原始排名
-                const rankDisplay = store.客戶數排名;
-
-                row.innerHTML = `
-                    <td class="number-cell">${rankDisplay}</td>
-                    <td class="store-name">${store.storeName}</td>
-                    <td>${getGroupBadge(store.group)}</td>
-                    <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
-                    <td class="number-cell">${store.新客數}</td>
-                    <td class="number-cell">${store.舊客數}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
+            populateCustomerABTableWithData(abGroupData);
         }
 
         function populateCustomerCTable() {
-            const tbody = document.getElementById('customer-c-table');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-            
             // 篩選C組數據
             const cGroupData = competitionData.filter(store => store.group === 'C');
-            // 按客戶數排名排序（預設）
-            cGroupData.sort((a, b) => a.客戶數排名 - b.客戶數排名);
-            
-            cGroupData.forEach((store) => {
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
-                const hasNoPerformance = store.customerScore === 0;
-
-                let rowClass = `group-${store.group.toLowerCase()}`;
-                if (hasNoPerformance) rowClass += ' no-performance';
-                // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.客戶數排名}`;
-                }
-                
-                const row = document.createElement('tr');  
-                row.className = rowClass;
-
-                const rankDisplay = store.客戶數排名;
-
-                row.innerHTML = `
-                    <td class="number-cell">${rankDisplay}</td>
-                    <td class="store-name">${store.storeName}</td>
-                    <td>${getGroupBadge(store.group)}</td>
-                    <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
-                    <td class="number-cell">${store.新客數}</td>
-                    <td class="number-cell">${store.舊客數}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
+            populateCustomerCTableWithData(cGroupData);
         }
         function populateRegionTable(region) {
             const tbody = document.getElementById(`region-${region}-table`);
@@ -1231,7 +1214,7 @@
             
             regionData.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const isCustomerQualified = isCustomerQualifiedForStore(store, store.customerScore);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 // 累加總計
@@ -1316,7 +1299,7 @@
 
             data.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
+                const isCustomerQualified = isCustomerQualifiedForStore(store, store.customerScore);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
@@ -1425,11 +1408,21 @@
                         valueA = a.customerScore;
                         valueB = b.customerScore;
                         break;
+                    case 'augustCustomerScore':
+                        // 使用 augustCompetitionData 提供的客戶數積分進行排序
+                        valueA = (typeof getAugustCustomerScore === 'function') ? (getAugustCustomerScore(a.storeName) || 0) : (a.augustCustomerScore || 0);
+                        valueB = (typeof getAugustCustomerScore === 'function') ? (getAugustCustomerScore(b.storeName) || 0) : (b.augustCustomerScore || 0);
+                        break;
+                    case 'averageCustomerScore':
+                        // 使用平均客戶數積分進行排序
+                        valueA = getAverageCustomerScore(a.storeName);
+                        valueB = getAverageCustomerScore(b.storeName);
+                        break;
                     case 'avgRank':
                         // 使用 computeAvgRankMap 來獲取平均積分排名
-                        const rankMap = computeAvgRankMap(currentData);
-                        valueA = rankMap[a.storeName] || a.金額排名;
-                        valueB = rankMap[b.storeName] || b.金額排名;
+                        const amountRankMap = computeAvgRankMap(currentData);
+                        valueA = amountRankMap[a.storeName] || a.金額排名;
+                        valueB = amountRankMap[b.storeName] || b.金額排名;
                         break;
                     case '金額排名':
                         valueA = a.金額排名;
@@ -1454,6 +1447,12 @@
                     case '自我宣告達成率':
                         valueA = parseFloat(a.自我宣告達成率.replace('%', ''));
                         valueB = parseFloat(b.自我宣告達成率.replace('%', ''));
+                        break;
+                    case 'customerAvgRank':
+                        // 使用平均客戶數積分排名
+                        const customerRankMap = computeCustomerAvgRankMap(currentData);
+                        valueA = customerRankMap[a.storeName] || Number.MAX_VALUE;
+                        valueB = customerRankMap[b.storeName] || Number.MAX_VALUE;
                         break;
                     case '舊客業績':
                         valueA = a.舊客業績;
@@ -1529,35 +1528,45 @@
             
             tbody.innerHTML = '';
             
-            // 計算該 data 的平均排名映射（用於排序後的顯示）
-            const rankMap = computeAvgRankMap(data);
+            // 總是計算平均積分排名映射
+            const avgRankMap = computeAvgRankMap(data);
+            const customerRankMap = currentSort.field === '客戶數排名' ? computeCustomerAvgRankMap(data) : null;
             
             data.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
                 
                 let rowClass = `group-${store.group.toLowerCase()}`;
-                // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.金額排名}`;
+                
+                // 根據排序欄位決定是否顯示排名效果
+                const avgRank = avgRankMap[store.storeName];
+                if ((!currentSort.field || currentSort.field === 'avgRank') && avgRank <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${avgRank}`;
                 }
                 
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 
-                // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
-                const avgRank = rankMap[store.storeName] || store.金額排名;
-                const rankDisplay = avgRank;
+                // 根據當前排序欄位顯示對應的排名
+                let rankDisplay;
+                if (currentSort.field === '客戶數排名') {
+                    rankDisplay = customerRankMap ? customerRankMap[store.storeName] : store.客戶數排名;
+                } else {
+                    // 預設顯示平均積分排名
+                    rankDisplay = avgRank;
+                }
                 
-                // 取得八月份積分，計算平均
+                // 計算八月和九月的積分
                 const augScore = getAugustScore(store.storeName);
-                const isAugQualified = isAmountQualified;
+                const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
+                const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
                 const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
 
                 const septScore = store.amountScore;
                 const isSeptQualified = isAmountQualified;
-                const septDisplay = formatNumber(septScore);
+                const septDisplay = hasNoPerformance ? '<span class="performance-status">尚無積分</span>' : formatNumber(septScore);
 
+                // 計算平均積分
                 const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
                 const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
                 const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
@@ -1588,68 +1597,46 @@
             
             tbody.innerHTML = '';
             
+            // 計算平均客戶數積分排名
+            const customerAvgRankMap = computeCustomerAvgRankMap(data);
+            
+            // 初始化總計
+            let totalNewCustomers = 0;
+            let totalOldCustomers = 0;
+            
             data.forEach((store, index) => {
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
                 const hasNoPerformance = store.customerScore === 0;
-                
+                // 累加總計
+                totalNewCustomers += Number(store.新客數) || 0;
+                totalOldCustomers += Number(store.舊客數) || 0;
+
                 let rowClass = `group-${store.group.toLowerCase()}`;
                 if (hasNoPerformance) rowClass += ' no-performance';
                 // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.客戶數排名}`;
+                if ((currentSort.field === null || currentSort.field === '客戶數排名') && 
+                    customerAvgRankMap[store.storeName] <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${customerAvgRankMap[store.storeName]}`;
                 }
-                
+
                 const row = document.createElement('tr');
                 row.className = rowClass;
-                
-                // 顯示排名
-                const rankDisplay = store.客戶數排名;
-                
+
+                // 顯示平均客戶數排名
+                const rankDisplay = customerAvgRankMap[store.storeName] || store.客戶數排名;
+
+                // 獲取各個階段的積分，並分別判斷是否達標
+                const augScore = getAugustCustomerScore(store.storeName);
+                const septScore = store.customerScore;
+                const avgScore = getAverageCustomerScore(store.storeName);
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
                     <td>${getGroupBadge(store.group)}</td>
                     <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
-                    <td class="number-cell">${store.新客數}</td>
-                    <td class="number-cell">${store.舊客數}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
-
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // 使用指定數據填充客戶C組表格
-        function populateCustomerCTableWithData(data) {
-            const tbody = document.getElementById('customer-c-table');
-            if (!tbody) return;
-            
-            tbody.innerHTML = '';
-            
-            data.forEach((store, index) => {
-                const isCustomerQualified = store.客戶數門檻達成率 === 'YES';
-                const hasNoPerformance = store.customerScore === 0;
-                
-                let rowClass = `group-${store.group.toLowerCase()}`;
-                if (hasNoPerformance) rowClass += ' no-performance';
-                // 金銀銅牌效果只在預設排序且前三名時顯示
-                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
-                    rowClass += ` rank-${store.客戶數排名}`;
-                }
-                
-                const row = document.createElement('tr');
-                row.className = rowClass;
-                
-                // 顯示排名
-                const rankDisplay = store.客戶數排名;
-                
-                row.innerHTML = `
-                    <td class="number-cell">${rankDisplay}</td>
-                    <td class="store-name">${store.storeName}</td>
-                    <td>${getGroupBadge(store.group)}</td>
-                    <td>${getRegionBadge(store.region)}</td>
-                    <td class="number-cell ${isCustomerQualified ? 'qualified' : ''}">${store.customerScore}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, augScore) ? 'qualified' : ''}">${augScore || '-'}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, septScore) ? 'qualified' : ''}">${septScore || '0'}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, avgScore) ? 'qualified' : ''}">${avgScore || '0'}</td>
                     <td class="number-cell">${store.新客數}</td>
                     <td class="number-cell">${store.舊客數}</td>
                     <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
@@ -1662,15 +1649,83 @@
             totalRow.className = 'total-row';
             totalRow.innerHTML = `
                 <td class="number-cell">-</td>
-                <td class="store-name">總計</td>
+                <td class="store-name">總計 (${data.length}家)</td>
+                <td>-</td>
                 <td>-</td>
                 <td class="number-cell">-</td>
                 <td class="number-cell">-</td>
                 <td class="number-cell">-</td>
+                <td class="number-cell">${totalNewCustomers}</td>
+                <td class="number-cell">${totalOldCustomers}</td>
                 <td class="number-cell">-</td>
-                <td class="number-cell">${formatNumber(totalOriginalAmount)}</td>
-                <td class="number-cell">${formatNumber(totalNewAmount)}</td>
-                <td class="number-cell">${formatNumber(totalOldAmount)}</td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        // 使用指定數據填充客戶C組表格
+        function populateCustomerCTableWithData(data) {
+            const tbody = document.getElementById('customer-c-table');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // 計算平均客戶數積分排名
+            const customerAvgRankMap = computeCustomerAvgRankMap(data);
+            
+            // 初始化總計
+            let totalNewCustomers = 0;
+            let totalOldCustomers = 0;
+            
+            data.forEach((store, index) => {
+                const hasNoPerformance = store.customerScore === 0;
+                // 累加總計
+                totalNewCustomers += Number(store.新客數) || 0;
+                totalOldCustomers += Number(store.舊客數) || 0;
+
+                let rowClass = `group-${store.group.toLowerCase()}`;
+                if (hasNoPerformance) rowClass += ' no-performance';
+                // 金銀銅牌效果只在預設排序且前三名時顯示
+                if ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) {
+                    rowClass += ` rank-${store.客戶數排名}`;
+                }
+
+                const row = document.createElement('tr');
+                row.className = rowClass;
+
+                // 顯示平均客戶數排名
+                const rankDisplay = customerAvgRankMap[store.storeName] || store.客戶數排名;
+
+                // 獲取各個階段的積分，並分別判斷是否達標
+                const augScore = getAugustCustomerScore(store.storeName);
+                const septScore = store.customerScore;
+                const avgScore = getAverageCustomerScore(store.storeName);
+
+                row.innerHTML = `
+                    <td class="number-cell">${rankDisplay}</td>
+                    <td class="store-name">${store.storeName}</td>
+                    <td>${getGroupBadge(store.group)}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, augScore) ? 'qualified' : ''}">${augScore || '-'}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, septScore) ? 'qualified' : ''}">${septScore || '0'}</td>
+                    <td class="number-cell ${isCustomerQualifiedForStore(store, avgScore) ? 'qualified' : ''}">${avgScore || '0'}</td>
+                    <td class="number-cell">${store.新客數}</td>
+                    <td class="number-cell">${store.舊客數}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 添加總計列
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td class="number-cell">-</td>
+                <td class="store-name">總計 (${data.length}家)</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
                 <td class="number-cell">${totalNewCustomers}</td>
                 <td class="number-cell">${totalOldCustomers}</td>
                 <td class="number-cell">-</td>
@@ -1688,7 +1743,8 @@
                 'augustScore': '8月金額積分',
                 'avgScore': '平均積分',
                 'avgRank': '平均積分排名',
-                'customerScore': '客戶數積分',
+                'customerScore': '9月客戶數積分',
+                'augustCustomerScore': '8月客戶數積分',
                 '新客業績': '新客業績',
                 '舊客業績': '舊客業績',
                 '自我宣告目標': '自我宣告目標',
@@ -1743,33 +1799,60 @@
             }
         }
 
-        // 獲取8月份的金額積分
-        function getAugustScore(storeName) {
-            try {
-                if (typeof augustCompetitionData === 'undefined') {
-                    console.error('augustCompetitionData is undefined');
-                    return null;
-                }
-                if (!Array.isArray(augustCompetitionData)) {
-                    console.error('augustCompetitionData is not an array:', augustCompetitionData);
-                    return null;
-                }
-                const store = augustCompetitionData.find(s => s.storeName === storeName);
-                return store ? store.amountScore : null;
-                const augustStore = augustCompetitionData.find(store => store.storeName === storeName);
-                if (!augustStore) {
-                    console.log('Store not found:', storeName);
-                    return '-';
-                }
-                const score = augustStore.amountScore;
-                console.log('Found score:', score, 'for store:', storeName);
-                return score;
-            } catch (error) {
-                console.error('Error in getAugustScore:', error);
-                return '-';
+        // 獲取8月份的資料 (安全取用，若找不到回傳 null)
+        function getAugustData(storeName) {
+            if (typeof augustCompetitionData === 'undefined') {
+                // augustCompetitionData 可能尚未載入
+                console.warn('augustCompetitionData is undefined');
+                return null;
             }
+            if (!Array.isArray(augustCompetitionData)) {
+                console.warn('augustCompetitionData is not an array:', augustCompetitionData);
+                return null;
+            }
+            return augustCompetitionData.find(s => s.storeName === storeName) || null;
         }
 
+        // 獲取8月份的金額積分（若不存在回傳 null）
+        function getAugustScore(storeName) {
+            const store = getAugustData(storeName);
+            if (!store) return null;
+            return typeof store.amountScore !== 'undefined' ? Number(store.amountScore) : null;
+        }
+
+        // 獲取8月份的客戶數積分（若不存在回傳 null）
+        function getAugustCustomerScore(storeName) {
+            const store = getAugustData(storeName);
+            if (!store) return null;
+            return typeof store.customerScore !== 'undefined' ? Number(store.customerScore) : null;
+        }
+
+        // 計算8月和9月的平均客戶數積分
+        function getAverageCustomerScore(storeName) {
+            const augustScore = getAugustCustomerScore(storeName);
+            const septStore = competitionData.find(s => s.storeName === storeName);
+            const septemberScore = septStore ? Number(septStore.customerScore) : null;
+            
+            // 如果兩個月都沒有分數，回傳0
+            if ((augustScore === null || augustScore === undefined) && 
+                (septemberScore === null || septemberScore === undefined)) {
+                return 0;
+            }
+            
+            // 如果其中一個月沒有分數，回傳另一個月的分數
+            if (augustScore === null || augustScore === undefined) return septemberScore || 0;
+            if (septemberScore === null || septemberScore === undefined) return augustScore || 0;
+            
+            // 兩個月都有分數，計算平均值
+            return Math.round((augustScore + septemberScore) / 2);
+        }
+        // 客戶數積分門檻判斷：A/B組為60，C組為30
+        function isCustomerQualifiedForStore(store, score) {
+            const group = (store.group || '').toString().toUpperCase();
+            const threshold = (group === 'C') ? 30 : 60;
+            const s = (typeof score === 'number') ? score : Number(score) || 0;
+            return s >= threshold;
+        }
         // 初始化頁面（在 DOMContentLoaded 後執行）
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM ready — initializing page');
