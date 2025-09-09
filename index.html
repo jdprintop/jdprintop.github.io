@@ -514,7 +514,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="金額排名">平均積分排名</th>
+                                <th class="sortable" data-field="avgRank">平均積分排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
@@ -540,7 +540,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="金額排名">平均積分排名</th>
+                                <th class="sortable" data-field="avgRank">平均積分排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
@@ -566,7 +566,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="sortable" data-field="金額排名">平均積分排名</th>
+                                <th class="sortable" data-field="avgRank">平均積分排名</th>
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
@@ -872,15 +872,6 @@
         let currentGroupTab = 'group-a';
         let currentSort = { field: null, direction: 'asc' };
 
-        function getRankMedal(rank) {
-            switch(rank) {
-                case 1: return '🥇';
-                case 2: return '🥈';
-                case 3: return '🥉';
-                default: return rank;
-            }
-        }
-
         function getGroupBadge(group) {
             const badges = {
                 'A': '<span class="group-badge badge-a">⭐新星</span>',
@@ -1112,9 +1103,7 @@
                 
                 // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
                 const avgRank = rankMap[store.storeName] || store.金額排名;
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && avgRank <= 3 && !hasNoPerformance)
-                    ? getRankMedal(avgRank)
-                    : avgRank;
+                const rankDisplay = avgRank;
                 
                 // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
@@ -1174,10 +1163,8 @@
                 const row = document.createElement('tr'); 
                 row.className = rowClass;
 
-                // 始終顯示原始金額排名，不受排序影響
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.客戶數排名) 
-                    : store.客戶數排名;
+                // 始終顯示原始排名
+                const rankDisplay = store.客戶數排名;
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1218,9 +1205,7 @@
                 const row = document.createElement('tr');  
                 row.className = rowClass;
 
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.客戶數排名) 
-                    : store.客戶數排名;
+                const rankDisplay = store.客戶數排名;
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1350,9 +1335,7 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 // 區域分析中的排名顯示
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && store.金額排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.金額排名) 
-                    : store.金額排名;
+                const rankDisplay = store.金額排名;
 
                 // 累加總計
                 const originalAmount = store.新客業績 + store.舊客業績;
@@ -1450,6 +1433,12 @@
                         valueA = a.customerScore;
                         valueB = b.customerScore;
                         break;
+                    case 'avgRank':
+                        // 使用 computeAvgRankMap 來獲取平均積分排名
+                        const rankMap = computeAvgRankMap(currentData);
+                        valueA = rankMap[a.storeName] || a.金額排名;
+                        valueB = rankMap[b.storeName] || b.金額排名;
+                        break;
                     case '金額排名':
                         valueA = a.金額排名;
                         valueB = b.金額排名;
@@ -1499,8 +1488,8 @@
                         break;
                     case 'avgScore':
                         // 平均：若有8月數據則取(8月 + 9月)/2，否則只用9月
-                        const aAug = (augustCompetitionData.find(s => s.storeName === a.storeName) || {}).amountScore;
-                        const bAug = (augustCompetitionData.find(s => s.storeName === b.storeName) || {}).amountScore;
+                        const aAug = typeof augustCompetitionData !== 'undefined' ? getAugustScore(a.storeName) : null;
+                        const bAug = typeof augustCompetitionData !== 'undefined' ? getAugustScore(b.storeName) : null;
                         const aSept = a.amountScore || 0;
                         const bSept = b.amountScore || 0;
                         valueA = (typeof aAug === 'number') ? Math.round((aAug + aSept) / 2) : aSept;
@@ -1566,9 +1555,7 @@
                 
                 // 顯示以平均積分計算的排名（同分同名次，下一名次數量減少）
                 const avgRank = rankMap[store.storeName] || store.金額排名;
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '金額排名') && avgRank <= 3 && !hasNoPerformance)
-                    ? getRankMedal(avgRank)
-                    : avgRank;
+                const rankDisplay = avgRank;
                 
                 // 取得八月份積分，計算平均
                 const augScore = getAugustScore(store.storeName);
@@ -1623,10 +1610,8 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 
-                // 始終顯示原始客戶數排名，不受排序影響
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.客戶數排名) 
-                    : store.客戶數排名;
+                // 顯示排名
+                const rankDisplay = store.客戶數排名;
                 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1664,10 +1649,8 @@
                 const row = document.createElement('tr');
                 row.className = rowClass;
                 
-                // 始終顯示原始客戶數排名，不受排序影響
-                const rankDisplay = ((currentSort.field === null || currentSort.field === '客戶數排名') && store.客戶數排名 <= 3 && !hasNoPerformance) 
-                    ? getRankMedal(store.客戶數排名) 
-                    : store.客戶數排名;
+                // 顯示排名
+                const rankDisplay = store.客戶數排名;
                 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1712,6 +1695,7 @@
                 'amountScore': '9月金額積分',
                 'augustScore': '8月金額積分',
                 'avgScore': '平均積分',
+                'avgRank': '平均積分排名',
                 'customerScore': '客戶數積分',
                 '新客業績': '新客業績',
                 '舊客業績': '舊客業績',
@@ -1772,13 +1756,14 @@
             try {
                 if (typeof augustCompetitionData === 'undefined') {
                     console.error('augustCompetitionData is undefined');
-                    return '-';
+                    return null;
                 }
                 if (!Array.isArray(augustCompetitionData)) {
                     console.error('augustCompetitionData is not an array:', augustCompetitionData);
-                    return '-';
+                    return null;
                 }
-                console.log('Looking for store:', storeName, 'in', augustCompetitionData.length, 'stores');
+                const store = augustCompetitionData.find(s => s.storeName === storeName);
+                return store ? store.amountScore : null;
                 const augustStore = augustCompetitionData.find(store => store.storeName === storeName);
                 if (!augustStore) {
                     console.log('Store not found:', storeName);
