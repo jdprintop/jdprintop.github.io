@@ -93,17 +93,15 @@
         
         .main-nav-item {
             flex: 1;
-            padding: 4px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
+            padding: 4px 20px;
+            background: #585858;
+            color: white;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.95em;
             cursor: pointer;
             transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            position: relative;
-            border: none;
-            background: #595959;
-            color: white;
+            white-space: nowrap;
         }
         
         .main-nav-item:hover {
@@ -179,6 +177,54 @@
         .tab-content {
             display: none;
             padding: 0;
+        }
+
+        /* 統計儀表版樣式 */
+        .dashboard {
+            padding: 20px;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid #818181;
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .kpi-title {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .kpi-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+        }
+        .kpi-sub {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 4px;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .chart-placeholder {
+            background: #fafafa;
+            border: 1px dashed #ccc;
+            border-radius: 10px;
+            min-height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
         }
         
         .tab-content.active {
@@ -470,6 +516,9 @@
             <button class="main-nav-item" onclick="switchMainTab('region')">
                 區域分析
             </button>
+            <button class="main-nav-item" onclick="switchMainTab('statistics')">
+                統計儀表版
+            </button>
         </div>
         
         <!-- 子導航 - 組別選擇 -->
@@ -496,6 +545,10 @@
                     <button class="group-tab" onclick="switchGroupTab('region-中區')">🌏 中區</button>
                     <button class="group-tab" onclick="switchGroupTab('region-南區')">🌏 南區</button>
                     <button class="group-tab" onclick="switchGroupTab('region-新創')">🚀 新創</button>
+                </div>
+
+                <!-- 統計儀表版時顯示的標籤（預留，暫無子標籤） -->
+                <div id="statistics-tabs" class="tab-group">
                 </div>
             </div>
         </div>
@@ -636,14 +689,6 @@
         </div>
         <!-- 區域分析內容區 -->
         <div id="region-content" class="tab-content">
-            <div class="threshold-info">
-                <div class="statistics-info">
-                    <span class="total-amount">門市目前加總發印成本：<span id="total-amount"></span></span> | 
-                    <span class="baseline">2025上半年月均發印成本：300,909</span> | 
-                    <span class="growth-rate">成長率：<span id="growth-rate"></span></span>
-                </div>
-            </div>
-            
             <!-- 營一 -->
             <div id="region-營一" class="tab-content active">
                 <div class="sort-info" id="sort-info-region-營一">目前排序：依門市名稱 (固定)</div>
@@ -840,6 +885,60 @@
                 </div>
             </div>
         </div>
+
+        <!-- 統計儀表版內容區（預留） -->
+        <div id="statistics-content" class="tab-content">
+            <div class="dashboard">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">8月原始業績合計</div>
+                        <div class="kpi-value" id="kpi-aug-sum">—</div>
+                        <div class="kpi-sub">平均：<span id="kpi-aug-avg">—</span></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月原始業績合計</div>
+                        <div class="kpi-value" id="kpi-sept-sum">—</div>
+                        <div class="kpi-sub">平均：<span id="kpi-sept-avg">—</span></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">8月原始業績達成率</div>
+                        <div class="kpi-value" id="kpi-aug-achievement-rate">—</div>
+                        <div class="kpi-sub">基準：300,909</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月原始業績達成率</div>
+                        <div class="kpi-value" id="kpi-sept-achievement-rate">—</div>
+                        <div class="kpi-sub">基準：300,909</div>
+                    </div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">8月新客數/舊客數</div>
+                        <div class="kpi-value"><span id="kpi-aug-new-count">—</span> / <span id="kpi-aug-old-count">—</span></div>
+                        <div class="kpi-sub">新客數 / 舊客數 合計</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月新客數/舊客數</div>
+                        <div class="kpi-value"><span id="kpi-sept-new-count">—</span> / <span id="kpi-sept-old-count">—</span></div>
+                        <div class="kpi-sub">新客數 / 舊客數 合計</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">8月新客/舊客原始業績</div>
+                        <div class="kpi-value"><span id="kpi-aug-new-rev">—</span> / <span id="kpi-aug-old-rev">—</span></div>
+                        <div class="kpi-sub">新客原始 / 舊客原始 業績合計</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月新客/舊客原始業績</div>
+                        <div class="kpi-value"><span id="kpi-sept-new-rev">—</span> / <span id="kpi-sept-old-rev">—</span></div>
+                        <div class="kpi-sub">新客原始 / 舊客原始 業績合計</div>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-placeholder">圖表區塊（待補）</div>
+                    <div class="chart-placeholder">圖表區塊（待補）</div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- 引入外部數據文件 -->
@@ -983,7 +1082,7 @@
             event.target.classList.add('active');
             
             // 切換內容區域
-            document.querySelectorAll('#amount-content, #customer-content, #region-content').forEach(content => {
+            document.querySelectorAll('#amount-content, #customer-content, #region-content, #statistics-content').forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(tab + '-content').classList.add('active');
@@ -1032,6 +1131,10 @@
                 });
                 document.getElementById('region-營一').classList.add('active');
                 
+            } else if (tab === 'statistics') {
+                // 統計儀表版：渲染 KPI
+                currentGroupTab = 'statistics';
+                try { renderStatisticsDashboard(); } catch (e) { console.warn('renderStatisticsDashboard failed', e); }
             }
             
             // 載入對應數據
@@ -1798,6 +1901,70 @@
             const newCustomer = Number(store.新客業績) || 0;
             const oldCustomer = Number(store.舊客業績) || 0;
             return newCustomer + oldCustomer;
+        }
+
+        // 渲染統計儀表版 KPI
+        function renderStatisticsDashboard() {
+            if (typeof competitionData === 'undefined' || typeof augustCompetitionData === 'undefined') return;
+            const allStores = competitionData;
+            const storeCount = allStores.length;
+            // 合計
+            let augSum = 0, septSum = 0;
+            let augNewCount = 0, augOldCount = 0;
+            let septNewCount = 0, septOldCount = 0;
+            let augNewRev = 0, augOldRev = 0;
+            let septNewRev = 0, septOldRev = 0;
+            allStores.forEach(s => {
+                // 9月資料
+                const sept = competitionData.find(x => x.storeName === s.storeName) || {};
+                const septNew = Number(sept.新客數) || 0;
+                const septOld = Number(sept.舊客數) || 0;
+                const septNewAmt = Number(sept.新客業績) || 0;
+                const septOldAmt = Number(sept.舊客業績) || 0;
+                septNewCount += septNew;
+                septOldCount += septOld;
+                septNewRev += septNewAmt;
+                septOldRev += septOldAmt;
+                // 8月資料
+                const aug = getAugustData(s.storeName) || {};
+                const augNew = Number(aug.新客數) || 0;
+                const augOld = Number(aug.舊客數) || 0;
+                const augNewAmt = Number(aug.新客業績) || 0;
+                const augOldAmt = Number(aug.舊客業績) || 0;
+                augNewCount += augNew;
+                augOldCount += augOld;
+                augNewRev += augNewAmt;
+                augOldRev += augOldAmt;
+                // 原始業績總和
+                augSum += (augNewAmt + augOldAmt);
+                septSum += (septNewAmt + septOldAmt);
+            });
+            const augAvg = storeCount ? Math.round(augSum / storeCount) : 0;
+            const septAvg = storeCount ? Math.round(septSum / storeCount) : 0;
+            const baseline = 300909;
+            const augAch = baseline ? ((augSum / baseline) * 100).toFixed(1) : '0.0';
+            const septAch = baseline ? ((septSum / baseline) * 100).toFixed(1) : '0.0';
+
+            // 寫入 DOM
+            const byId = id => document.getElementById(id);
+            const setText = (id, val) => { const el = byId(id); if (el) el.textContent = typeof val === 'number' ? val.toLocaleString() : val; };
+            setText('kpi-store-count', storeCount);
+            setText('kpi-aug-sum', augSum);
+            setText('kpi-aug-avg', augAvg);
+            setText('kpi-sept-sum', septSum);
+            setText('kpi-sept-avg', septAvg);
+            setText('kpi-aug-achievement-rate', `${augAch}%`);
+            setText('kpi-sept-achievement-rate', `${septAch}%`);
+            // 新客/舊客 數量（合計）
+            setText('kpi-aug-new-count', augNewCount);
+            setText('kpi-aug-old-count', augOldCount);
+            setText('kpi-sept-new-count', septNewCount);
+            setText('kpi-sept-old-count', septOldCount);
+            // 新客/舊客 原始業績（合計）
+            setText('kpi-aug-new-rev', augNewRev);
+            setText('kpi-aug-old-rev', augOldRev);
+            setText('kpi-sept-new-rev', septNewRev);
+            setText('kpi-sept-old-rev', septOldRev);
         }
         // 客戶數積分門檻判斷：A/B組為60，C組為30
         function isCustomerQualifiedForStore(store, score) {
