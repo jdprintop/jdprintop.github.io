@@ -185,7 +185,7 @@
         }
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            grid-template-columns: repeat(5, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
         }
@@ -896,30 +896,13 @@
                         <div class="kpi-sub">平均：<span id="kpi-aug-avg">—</span></div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-title">9月原始業績合計</div>
-                        <div class="kpi-value" id="kpi-sept-sum">—</div>
-                        <div class="kpi-sub">平均：<span id="kpi-sept-avg">—</span></div>
-                    </div>
-                    <div class="kpi-card">
                         <div class="kpi-title">8月原始業績達成率</div>
                         <div class="kpi-value" id="kpi-aug-achievement-rate">—</div>
                         <div class="kpi-sub">基準：300,909</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-title">9月原始業績達成率</div>
-                        <div class="kpi-value" id="kpi-sept-achievement-rate">—</div>
-                        <div class="kpi-sub">基準：300,909</div>
-                    </div>
-                </div>
-                <div class="kpi-grid">
-                    <div class="kpi-card">
                         <div class="kpi-title">8月新客數/舊客數</div>
                         <div class="kpi-value"><span id="kpi-aug-new-count">—</span> / <span id="kpi-aug-old-count">—</span></div>
-                        <div class="kpi-sub">新客數 / 舊客數 合計</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-title">9月新客數/舊客數</div>
-                        <div class="kpi-value"><span id="kpi-sept-new-count">—</span> / <span id="kpi-sept-old-count">—</span></div>
                         <div class="kpi-sub">新客數 / 舊客數 合計</div>
                     </div>
                     <div class="kpi-card">
@@ -928,15 +911,44 @@
                         <div class="kpi-sub">新客原始 / 舊客原始 業績合計</div>
                     </div>
                     <div class="kpi-card">
+                        <div class="kpi-title">8月新客/舊客客單價</div>
+                        <div class="kpi-value"><span id="kpi-aug-new-arpu">—</span> / <span id="kpi-aug-old-arpu">—</span></div>
+                        <div class="kpi-sub">新客客單/舊客客單</div>
+                    </div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月原始業績合計</div>
+                        <div class="kpi-value" id="kpi-sept-sum">—</div>
+                        <div class="kpi-sub">平均：<span id="kpi-sept-avg">—</span></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月原始業績達成率</div>
+                        <div class="kpi-value" id="kpi-sept-achievement-rate">—</div>
+                        <div class="kpi-sub">基準：300,909</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月新客數/舊客數</div>
+                        <div class="kpi-value"><span id="kpi-sept-new-count">—</span> / <span id="kpi-sept-old-count">—</span></div>
+                        <div class="kpi-sub">新客數 / 舊客數 合計</div>
+                    </div>
+                    <div class="kpi-card">
                         <div class="kpi-title">9月新客/舊客原始業績</div>
                         <div class="kpi-value"><span id="kpi-sept-new-rev">—</span> / <span id="kpi-sept-old-rev">—</span></div>
                         <div class="kpi-sub">新客原始 / 舊客原始 業績合計</div>
                     </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月新客/舊客客單價</div>
+                        <div class="kpi-value"><span id="kpi-sept-new-arpu">—</span> / <span id="kpi-sept-old-arpu">—</span></div>
+                        <div class="kpi-sub">新客客單/舊客客單</div>
+                    </div>
                 </div>
-                <div class="chart-grid">
+                <!--
+                //<div class="chart-grid">
                     <div class="chart-placeholder">圖表區塊（待補）</div>
                     <div class="chart-placeholder">圖表區塊（待補）</div>
                 </div>
+                -->
             </div>
         </div>
     </div>
@@ -1941,6 +1953,11 @@
             });
             const augAvg = storeCount ? Math.round(augSum / storeCount) : 0;
             const septAvg = storeCount ? Math.round(septSum / storeCount) : 0;
+            // 客單價（ARPU）
+            const augNewArpu = augNewCount ? Math.round(augNewRev / augNewCount) : 0;
+            const augOldArpu = augOldCount ? Math.round(augOldRev / augOldCount) : 0;
+            const septNewArpu = septNewCount ? Math.round(septNewRev / septNewCount) : 0;
+            const septOldArpu = septOldCount ? Math.round(septOldRev / septOldCount) : 0;
             const baseline = 300909;
             const augAch = baseline ? ((augSum / baseline) * 100).toFixed(1) : '0.0';
             const septAch = baseline ? ((septSum / baseline) * 100).toFixed(1) : '0.0';
@@ -1965,6 +1982,12 @@
             setText('kpi-aug-old-rev', augOldRev);
             setText('kpi-sept-new-rev', septNewRev);
             setText('kpi-sept-old-rev', septOldRev);
+            // 客單價（8月）
+            setText('kpi-aug-new-arpu', augNewArpu);
+            setText('kpi-aug-old-arpu', augOldArpu);
+            // 客單價（9月）
+            setText('kpi-sept-new-arpu', septNewArpu);
+            setText('kpi-sept-old-arpu', septOldArpu);
         }
         // 客戶數積分門檻判斷：A/B組為60，C組為30
         function isCustomerQualifiedForStore(store, score) {
