@@ -1,7 +1,7 @@
 // 競賽數據 - 自動生成於 2025/10/1 下午2:18:57
 // 從CSV文件載入的完整44家門市數據
 
-const competitionData = [
+const septemberCompetitionData = [
     {
         "storeName": "桃園中壢店",
         "group": "A",
@@ -929,7 +929,7 @@ const competitionData = [
 ];
 
 // 統計數據
-const statistics = {
+const septemberStatistics = {
     "總門市數": 44,
     "有業績門市數": 44,
     "業績達標門市數": 6,
@@ -961,7 +961,7 @@ const statistics = {
 };
 
 // 工具函數
-const utils = {
+const septemberUtils = {
     // 格式化數字
     formatNumber: (num) => {
         return num.toLocaleString();
@@ -994,7 +994,7 @@ const utils = {
     
     // 篩選資料
     filterByGroup: (group) => {
-        return competitionData.filter(store => store.group === group);
+        return septemberCompetitionData.filter(store => store.group === group);
     },
     
     // 按金額排名排序（組內）
@@ -1021,15 +1021,15 @@ const utils = {
 // 導出給其他檔案使用
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        competitionData,
-        statistics,
-        utils
+        septemberCompetitionData,
+        septemberStatistics,
+        septemberUtils
     };
 }
 
 // 瀏覽器環境下掛載到window
 if (typeof window !== 'undefined') {
-    window.competitionData = competitionData;
-    window.competitionStatistics = statistics;
-    window.competitionUtils = utils;
+    window.septemberCompetitionData = septemberCompetitionData;
+    window.septemberStatistics = septemberStatistics;
+    window.septemberUtils = septemberUtils;
 }
