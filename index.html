@@ -566,7 +566,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
-                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="septemberScore">9月金額積分</th>
+                                <th class="sortable" data-field="amountScore">10月金額積分</th>
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
@@ -592,7 +593,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
-                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="septemberScore">9月金額積分</th>
+                                <th class="sortable" data-field="amountScore">10月金額積分</th>
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
@@ -618,7 +620,8 @@
                                 <th class="sortable" data-field="storeName">門市名稱</th>
                                 <th class="sortable" data-field="region">區域</th>
                                 <th class="sortable" data-field="augustScore">8月金額積分</th>
-                                <th class="sortable" data-field="amountScore">9月金額積分</th>
+                                <th class="sortable" data-field="septemberScore">9月金額積分</th>
+                                <th class="sortable" data-field="amountScore">10月金額積分</th>
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
@@ -957,7 +960,9 @@
     <script>
         // 當腳本載入完成時的處理函數
         function onScriptsLoaded() {
-            if (typeof competitionData !== 'undefined' && typeof augustCompetitionData !== 'undefined') {
+            if (typeof competitionData !== 'undefined' && 
+                typeof augustCompetitionData !== 'undefined' && 
+                typeof septemberCompetitionData !== 'undefined') {
                 initializePage();
             }
         }
@@ -970,6 +975,7 @@
     </script>
     <script src="competition-data.js" onload="onScriptsLoaded()"></script>
     <script src="competition-data-aug.js" onload="onScriptsLoaded()"></script>
+    <script src="competition-data-sep.js" onload="onScriptsLoaded()"></script>
     
     <script>
         // 當前活動分頁
@@ -1029,11 +1035,18 @@
         // 計算每家門市的平均積分並回傳標準競賽排名（同分同名次，下一名次數量減少）
         // 輸入 data 為該組的 store 陣列，回傳物件 map: { storeName: rank }
         function computeAvgRankMap(data) {
-            // 建立包含 avg 的暫存陣列
+            // 建立包含 avg 的暫存陣列 (8月 + 9月 + 10月)
             const arr = data.map(s => {
                 const aug = getAugustScore(s.storeName);
-                const sept = s.amountScore || 0;
-                const avg = (typeof aug === 'number') ? Math.round((aug + sept) / 2) : sept;
+                const sep = getSeptemberScore(s.storeName);
+                const oct = s.amountScore || 0;
+                
+                let total = 0, count = 0;
+                if (typeof aug === 'number') { total += aug; count++; }
+                if (typeof sep === 'number') { total += sep; count++; }
+                if (oct > 0) { total += oct; count++; }
+                
+                const avg = count > 0 ? Math.round(total / count) : 0;
                 return { storeName: s.storeName, avg };
             });
 
@@ -1254,14 +1267,30 @@
         function populateGroupTable(group) {
             const groupData = competitionData.filter(store => store.group === group);
             
-            // 計算平均積分並排序
+            // 計算平均積分並排序 (8月 + 9月 + 10月)
             const avgScores = new Map();
             groupData.forEach(store => {
                 const augScore = getAugustScore(store.storeName);
-                const septScore = store.amountScore || 0;
-                const avgScore = (typeof augScore === 'number') ? 
-                    Math.round((augScore + septScore) / 2) : 
-                    septScore;
+                const sepScore = getSeptemberScore(store.storeName);
+                const octScore = store.amountScore || 0; // 10月積分
+                
+                let total = 0;
+                let count = 0;
+                
+                if (typeof augScore === 'number') {
+                    total += augScore;
+                    count++;
+                }
+                if (typeof sepScore === 'number') {
+                    total += sepScore;
+                    count++;
+                }
+                if (octScore > 0) {
+                    total += octScore;
+                    count++;
+                }
+                
+                const avgScore = count > 0 ? Math.round(total / count) : 0;
                 avgScores.set(store.storeName, avgScore);
             });
             
@@ -1278,12 +1307,23 @@
                     
                     switch (currentSort.field) {
                         case '客戶數排名':
-                            aValue = (typeof getAugustCustomerScore(a.storeName) === 'number') ? 
-                                Math.round((getAugustCustomerScore(a.storeName) + (a.customerScore || 0)) / 2) : 
-                                (a.customerScore || 0);
-                            bValue = (typeof getAugustCustomerScore(b.storeName) === 'number') ? 
-                                Math.round((getAugustCustomerScore(b.storeName) + (b.customerScore || 0)) / 2) : 
-                                (b.customerScore || 0);
+                            const aAugCust = getAugustCustomerScore(a.storeName);
+                            const aSepCust = getSeptemberCustomerScore(a.storeName);
+                            const aOctCust = a.customerScore || 0;
+                            let aTotalCust = 0, aCountCust = 0;
+                            if (typeof aAugCust === 'number') { aTotalCust += aAugCust; aCountCust++; }
+                            if (typeof aSepCust === 'number') { aTotalCust += aSepCust; aCountCust++; }
+                            if (aOctCust > 0) { aTotalCust += aOctCust; aCountCust++; }
+                            aValue = aCountCust > 0 ? Math.round(aTotalCust / aCountCust) : 0;
+                            
+                            const bAugCust = getAugustCustomerScore(b.storeName);
+                            const bSepCust = getSeptemberCustomerScore(b.storeName);
+                            const bOctCust = b.customerScore || 0;
+                            let bTotalCust = 0, bCountCust = 0;
+                            if (typeof bAugCust === 'number') { bTotalCust += bAugCust; bCountCust++; }
+                            if (typeof bSepCust === 'number') { bTotalCust += bSepCust; bCountCust++; }
+                            if (bOctCust > 0) { bTotalCust += bOctCust; bCountCust++; }
+                            bValue = bCountCust > 0 ? Math.round(bTotalCust / bCountCust) : 0;
                             break;
                         default:
                             aValue = a[currentSort.field] || 0;
@@ -1569,19 +1609,34 @@
                         break;
                     case 'augustScore':
                         // 直接獲取8月份的金額積分
-                        const augustStoreA = augustCompetitionData.find(store => store.storeName === a.storeName);
-                        const augustStoreB = augustCompetitionData.find(store => store.storeName === b.storeName);
-                        valueA = augustStoreA ? augustStoreA.amountScore : -1;
-                        valueB = augustStoreB ? augustStoreB.amountScore : -1;
+                        valueA = getAugustScore(a.storeName) || -1;
+                        valueB = getAugustScore(b.storeName) || -1;
+                        break;
+                    case 'septemberScore':
+                        // 直接獲取9月份的金額積分
+                        valueA = getSeptemberScore(a.storeName) || -1;
+                        valueB = getSeptemberScore(b.storeName) || -1;
                         break;
                     case 'avgScore':
-                        // 平均：若有8月數據則取(8月 + 9月)/2，否則只用9月
-                        const aAug = typeof augustCompetitionData !== 'undefined' ? getAugustScore(a.storeName) : null;
-                        const bAug = typeof augustCompetitionData !== 'undefined' ? getAugustScore(b.storeName) : null;
-                        const aSept = a.amountScore || 0;
-                        const bSept = b.amountScore || 0;
-                        valueA = (typeof aAug === 'number') ? Math.round((aAug + aSept) / 2) : aSept;
-                        valueB = (typeof bAug === 'number') ? Math.round((bAug + bSept) / 2) : bSept;
+                        // 平均：計算8月 + 9月 + 10月的平均積分
+                        const aAug = getAugustScore(a.storeName);
+                        const bAug = getAugustScore(b.storeName);
+                        const aSep = getSeptemberScore(a.storeName);
+                        const bSep = getSeptemberScore(b.storeName);
+                        const aOct = a.amountScore || 0;
+                        const bOct = b.amountScore || 0;
+                        
+                        let aTotal = 0, aCount = 0;
+                        if (typeof aAug === 'number') { aTotal += aAug; aCount++; }
+                        if (typeof aSep === 'number') { aTotal += aSep; aCount++; }
+                        if (aOct > 0) { aTotal += aOct; aCount++; }
+                        valueA = aCount > 0 ? Math.round(aTotal / aCount) : 0;
+                        
+                        let bTotal = 0, bCount = 0;
+                        if (typeof bAug === 'number') { bTotal += bAug; bCount++; }
+                        if (typeof bSep === 'number') { bTotal += bSep; bCount++; }
+                        if (bOct > 0) { bTotal += bOct; bCount++; }
+                        valueB = bCount > 0 ? Math.round(bTotal / bCount) : 0;
                         break;
                     default:
                         return 0;
@@ -1649,19 +1704,27 @@
                     rankDisplay = avgRank;
                 }
                 
-                // 計算八月和九月的積分
+                // 計算八月、九月和十月的積分
                 const augScore = getAugustScore(store.storeName);
                 const augThreshold = store.amountThreshold || store.自我宣告目標 || 0;
                 const isAugQualified = (typeof augScore === 'number' && augScore >= augThreshold);
                 const augDisplay = (typeof augScore === 'number') ? formatNumber(augScore) : '-';
 
-                const septScore = store.amountScore;
-                const isSeptQualified = isAmountQualified;
-                const septDisplay = hasNoPerformance ? '<span class="performance-status">尚無積分</span>' : formatNumber(septScore);
+                const sepScore = getSeptemberScore(store.storeName);
+                const isSepQualified = (typeof sepScore === 'number' && sepScore >= augThreshold);
+                const sepDisplay = (typeof sepScore === 'number') ? formatNumber(sepScore) : '-';
 
-                // 計算平均積分
-                const avgScore = (typeof augScore === 'number') ? Math.round(((augScore || 0) + (septScore || 0)) / 2) : septScore;
-                const avgDisplay = typeof avgScore === 'number' ? formatNumber(avgScore) : '-';
+                const octScore = store.amountScore;
+                const isOctQualified = isAmountQualified;
+                const octDisplay = hasNoPerformance ? '<span class="performance-status">尚無積分</span>' : formatNumber(octScore);
+
+                // 計算平均積分 (8月 + 9月 + 10月)
+                let total = 0, count = 0;
+                if (typeof augScore === 'number') { total += augScore; count++; }
+                if (typeof sepScore === 'number') { total += sepScore; count++; }
+                if (octScore > 0) { total += octScore; count++; }
+                const avgScore = count > 0 ? Math.round(total / count) : 0;
+                const avgDisplay = avgScore > 0 ? formatNumber(avgScore) : '-';
                 const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
 
                 row.innerHTML = `
@@ -1669,7 +1732,8 @@
                     <td class="store-name">${store.storeName}</td>
                     <td>${getRegionBadge(store.region)}</td>
                     <td class="number-cell ${isAugQualified ? 'qualified' : ''}">${augDisplay}</td>
-                    <td class="number-cell ${isSeptQualified ? 'qualified' : ''}">${septDisplay}</td>
+                    <td class="number-cell ${isSepQualified ? 'qualified' : ''}">${sepDisplay}</td>
+                    <td class="number-cell ${isOctQualified ? 'qualified' : ''}">${octDisplay}</td>
                     <td class="number-cell ${isAvgQualified ? 'qualified' : ''}">${avgDisplay}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
@@ -1789,12 +1853,14 @@
                 'storeName': '門市名稱',
                 'region': '區域',
                 'group': '組別',
-                'amountScore': '9月金額積分',
+                'amountScore': '10月金額積分',
                 'augustScore': '8月金額積分',
+                'septemberScore': '9月金額積分',
                 'avgScore': '平均金額積分',
                 'avgRank': '平均積分排名',
-                'customerScore': '9月客戶數積分',
+                'customerScore': '10月客戶數積分',
                 'augustCustomerScore': '8月客戶數積分',
+                'septemberCustomerScore': '9月客戶數積分',
                 'august原始業績': '8月原始業績',
                 'sept原始業績': '9月原始業績',
                 '新客業績': '新客業績',
@@ -1870,6 +1936,33 @@
             return typeof store.amountScore !== 'undefined' ? Number(store.amountScore) : null;
         }
 
+        // 獲取9月份的資料 (安全取用，若找不到回傳 null)
+        function getSeptemberData(storeName) {
+            if (typeof septemberCompetitionData === 'undefined') {
+                console.warn('septemberCompetitionData is undefined');
+                return null;
+            }
+            if (!Array.isArray(septemberCompetitionData)) {
+                console.warn('septemberCompetitionData is not an array:', septemberCompetitionData);
+                return null;
+            }
+            return septemberCompetitionData.find(s => s.storeName === storeName) || null;
+        }
+
+        // 獲取9月份的金額積分（若不存在回傳 null）
+        function getSeptemberScore(storeName) {
+            const store = getSeptemberData(storeName);
+            if (!store) return null;
+            return typeof store.amountScore !== 'undefined' ? Number(store.amountScore) : null;
+        }
+
+        // 獲取9月份的客戶數積分（若不存在回傳 null）
+        function getSeptemberCustomerScore(storeName) {
+            const store = getSeptemberData(storeName);
+            if (!store) return null;
+            return typeof store.customerScore !== 'undefined' ? Number(store.customerScore) : null;
+        }
+
         // 獲取8月份的客戶數積分（若不存在回傳 null）
         function getAugustCustomerScore(storeName) {
             const store = getAugustData(storeName);
@@ -1880,21 +1973,26 @@
         // 計算8月和9月的平均客戶數積分
         function getAverageCustomerScore(storeName) {
             const augustScore = getAugustCustomerScore(storeName);
-            const septStore = competitionData.find(s => s.storeName === storeName);
-            const septemberScore = septStore ? Number(septStore.customerScore) : null;
+            const septemberScore = getSeptemberCustomerScore(storeName);
+            const octoberStore = competitionData.find(s => s.storeName === storeName);
+            const octoberScore = octoberStore ? Number(octoberStore.customerScore) : null;
             
-            // 如果兩個月都沒有分數，回傳0
-            if ((augustScore === null || augustScore === undefined) && 
-                (septemberScore === null || septemberScore === undefined)) {
-                return 0;
+            let total = 0, count = 0;
+            
+            if (typeof augustScore === 'number') {
+                total += augustScore;
+                count++;
+            }
+            if (typeof septemberScore === 'number') {
+                total += septemberScore;
+                count++;
+            }
+            if (typeof octoberScore === 'number' && octoberScore > 0) {
+                total += octoberScore;
+                count++;
             }
             
-            // 如果其中一個月沒有分數，回傳另一個月的分數
-            if (augustScore === null || augustScore === undefined) return septemberScore || 0;
-            if (septemberScore === null || septemberScore === undefined) return augustScore || 0;
-            
-            // 兩個月都有分數，計算平均值
-            return Math.round((augustScore + septemberScore) / 2);
+            return count > 0 ? Math.round(total / count) : 0;
         }
 
         // 獲取8月份的原始業績（新客業績 + 舊客業績）
@@ -2004,6 +2102,7 @@
             const missing = [];
             if (typeof competitionData === 'undefined') missing.push('competition-data.js');
             if (typeof augustCompetitionData === 'undefined') missing.push('competition-data-aug.js');
+            if (typeof septemberCompetitionData === 'undefined') missing.push('competition-data-sep.js');
 
             if (missing.length) {
                 console.error('Missing data files:', missing.join(', '));
