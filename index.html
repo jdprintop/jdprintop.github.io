@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1001-1017標籤業績競賽戰報</title>
+    <title>1001-1026標籤業績競賽戰報</title>
     <style>
         * {
             margin: 0;
@@ -255,12 +255,22 @@
             border-right: 1px solid #2c3e50;
             font-size: 12px;
             cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
             transition: background-color 0.2s ease;
         }
         
         th:hover {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        
+        th.sortable {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         th.sortable::after {
@@ -496,13 +506,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏆 1001-1017標籤競賽戰報</h1>
+            <h1>🏆 1001-1026標籤競賽戰報</h1>
         </div>
         
         <!-- 數據更新時間 -->
         <div class="update-time">
             <span class="calendar-icon">📅</span>
-            數據更新時間：2024年10月17日
+            數據更新時間：2024年10月27日
         </div>
         
         <!-- 主導航 - 金額積分 vs 客戶數積分 -->
