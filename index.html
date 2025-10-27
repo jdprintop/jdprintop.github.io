@@ -1772,6 +1772,13 @@
             const avgRankMap = computeAvgRankMap(data);
             const customerRankMap = currentSort.field === '客戶數排名' ? computeCustomerAvgRankMap(data) : null;
             
+            // 初始化總計變數
+            let totalAugScore = 0;
+            let totalSepScore = 0;
+            let totalOctScore = 0;
+            let totalAvgScore = 0;
+            let storeCount = data.length;
+            
             data.forEach((store) => {
                 const isAmountQualified = isAmountQualifiedForStore(store);
                 const hasNoPerformance = store.amountScore === 0;
@@ -1814,6 +1821,12 @@
                 const avgDisplay = avgScore > 0 ? formatNumber(avgScore) : '0';
                 const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
 
+                // 累加總計
+                totalAugScore += augScoreValue;
+                totalSepScore += sepScoreValue;
+                totalOctScore += octScoreValue;
+                totalAvgScore += avgScore;
+
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
                     <td class="store-name">${store.storeName}</td>
@@ -1832,6 +1845,25 @@
                 `;
                 tbody.appendChild(row);
             });
+            
+            // 添加總計列
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td class="number-cell">-</td>
+                <td class="store-name">合計 (${storeCount}家)</td>
+                <td>-</td>
+                <td class="number-cell">${formatNumber(totalAugScore)}</td>
+                <td class="number-cell">${formatNumber(totalSepScore)}</td>
+                <td class="number-cell">${formatNumber(totalOctScore)}</td>
+                <td class="number-cell">${formatNumber(totalAvgScore)}</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+                <td class="number-cell">-</td>
+            `;
+            tbody.appendChild(totalRow);
         }
 
         // 使用指定數據填充客戶A+B表格
