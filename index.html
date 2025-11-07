@@ -185,29 +185,29 @@
         }
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(5, minmax(180px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(6, minmax(160px, 1fr));
+            gap: 14px;
             margin-bottom: 20px;
         }
         .kpi-card {
             background: #ffffff;
             border: 1px solid #818181;
             border-radius: 10px;
-            padding: 14px 16px;
+            padding: 12px 14px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .kpi-title {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #666;
             margin-bottom: 6px;
         }
         .kpi-value {
-            font-size: 1.6em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #333;
         }
         .kpi-sub {
-            font-size: 0.85em;
+            font-size: 0.8em;
             color: #888;
             margin-top: 4px;
         }
@@ -526,6 +526,9 @@
             <button class="main-nav-item" onclick="switchMainTab('region')">
                 區域分析
             </button>
+            <button class="main-nav-item" onclick="switchMainTab('outsource')">
+                委外/中和分析
+            </button>
             <button class="main-nav-item" onclick="switchMainTab('statistics')">
                 統計儀表版
             </button>
@@ -581,9 +584,10 @@
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="新客業績">新客業績</th>
-                                <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                                <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                                <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="group-a-table">
@@ -608,9 +612,10 @@
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="新客業績">新客業績</th>
-                                <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                                <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                                <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                                 
                             </tr>
                         </thead>
@@ -635,9 +640,10 @@
                                 <th class="sortable" data-field="avgScore">平均積分</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="新客業績">新客業績</th>
-                                <th class="sortable" data-field="舊客業績">舊客業績</th>
-                                <th class="sortable" data-field="中和比例">中和發包比例</th>
+                                <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                                <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                                <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                                 
                             </tr>
                         </thead>
@@ -665,9 +671,10 @@
                                 <th class="sortable" data-field="septemberCustomerScore">9月客戶數積分</th>
                                 <th class="sortable" data-field="customerScore">10月客戶數積分</th>
                                 <th class="sortable" data-field="averageCustomerScore">平均客戶數積分</th>
-                                <th class="sortable" data-field="新客數">新客數</th>
-                                <th class="sortable" data-field="舊客數">舊客數</th>
-                                <th class="sortable" data-field="中和比例">中和發包比例</th> 
+                                <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                                <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                                <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="customer-ab-table">
@@ -691,9 +698,10 @@
                                 <th class="sortable" data-field="septemberCustomerScore">9月客戶數積分</th>
                                 <th class="sortable" data-field="customerScore">10月客戶數積分</th>
                                 <th class="sortable" data-field="averageCustomerScore">平均客戶數積分</th>
-                                <th class="sortable" data-field="新客數">新客數</th>
-                                <th class="sortable" data-field="舊客數">舊客數</th>
-                                <th class="sortable" data-field="中和比例">中和發包比例</th> 
+                                <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                                <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                                <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="customer-c-table">
@@ -726,7 +734,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-營一-table">
@@ -757,7 +765,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-營二-table">
@@ -788,7 +796,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-營三-table">
@@ -819,7 +827,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-北區-table">
@@ -850,7 +858,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-中區-table">
@@ -881,7 +889,7 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-南區-table">
@@ -912,13 +920,39 @@
                                 <th class="sortable" data-field="oct原始業績">10月原始業績</th>
                                 <th class="sortable" data-field="自我宣告目標">自我宣告目標</th>
                                 <th class="sortable" data-field="自我宣告達成率">自我宣告達成率</th>
-                                <th class="sortable" data-field="中和比例">中和發包比率</th>
+                                <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
                             </tr>
                         </thead>
                         <tbody id="region-新創-table">
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- 委外/中和分析內容區 -->
+        <div id="outsource-content" class="tab-content">
+            <div class="sort-info" id="sort-info-outsource">目前排序：依門市名稱</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-field="storeName">門市名稱</th>
+                            <th class="sortable" data-field="group">組別</th>
+                            <th class="sortable" data-field="region">區域</th>
+                            <th class="sortable" data-field="aug中和金額佔比">8月中和金額佔比</th>
+                            <th class="sortable" data-field="sep中和金額佔比">9月中和金額佔比</th>
+                            <th class="sortable" data-field="oct中和金額佔比">10月中和金額佔比</th>
+                            <th class="sortable" data-field="total中和金額佔比">三個月中和金額佔比</th>
+                            <th>8月(中和/委外)</th>
+                            <th>9月(中和/委外)</th>
+                            <th>10月(中和/委外)</th>
+                            <th>8+9+10月(中和/委外)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outsource-table">
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -951,6 +985,11 @@
                         <div class="kpi-value"><span id="kpi-aug-new-arpu">—</span> / <span id="kpi-aug-old-arpu">—</span></div>
                         <div class="kpi-sub">新客客單/舊客客單</div>
                     </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">8月中和/委外</div>
+                        <div class="kpi-value"><span id="kpi-aug-zh-amount">—</span> / <span id="kpi-aug-out-amount">—</span></div>
+                        <div class="kpi-sub"><span id="kpi-aug-zh-count">—</span>件 / <span id="kpi-aug-out-count">—</span>件</div>
+                    </div>
                 </div>
                 <div class="kpi-grid">
                     <div class="kpi-card">
@@ -977,6 +1016,11 @@
                         <div class="kpi-title">9月新客/舊客客單價</div>
                         <div class="kpi-value"><span id="kpi-sept-new-arpu">—</span> / <span id="kpi-sept-old-arpu">—</span></div>
                         <div class="kpi-sub">新客客單/舊客客單</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">9月中和/委外</div>
+                        <div class="kpi-value"><span id="kpi-sept-zh-amount">—</span> / <span id="kpi-sept-out-amount">—</span></div>
+                        <div class="kpi-sub"><span id="kpi-sept-zh-count">—</span>件 / <span id="kpi-sept-out-count">—</span>件</div>
                     </div>
                 </div>
                 <div class="kpi-grid">
@@ -1005,7 +1049,13 @@
                         <div class="kpi-value"><span id="kpi-oct-new-arpu">—</span> / <span id="kpi-oct-old-arpu">—</span></div>
                         <div class="kpi-sub">新客客單/舊客客單</div>
                     </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">10月中和/委外</div>
+                        <div class="kpi-value"><span id="kpi-oct-zh-amount">—</span> / <span id="kpi-oct-out-amount">—</span></div>
+                        <div class="kpi-sub"><span id="kpi-oct-zh-count">—</span>件 / <span id="kpi-oct-out-count">—</span>件</div>
+                    </div>
                 </div>
+                
                 <!--
                 //<div class="chart-grid">
                     <div class="chart-placeholder">圖表區塊（待補）</div>
@@ -1020,7 +1070,7 @@
     <script>
         // 追蹤已載入的腳本數量
         let loadedScripts = 0;
-        const totalScripts = 3;
+        const totalScripts = 4;
         
         // 當腳本載入完成時的處理函數
         function onScriptsLoaded() {
@@ -1029,12 +1079,14 @@
             console.log('competitionData:', typeof competitionData);
             console.log('augustCompetitionData:', typeof augustCompetitionData);
             console.log('septemberCompetitionData:', typeof septemberCompetitionData);
+            console.log('storeData:', typeof storeData);
             
             if (loadedScripts >= totalScripts) {
                 // 確認所有資料都已載入
                 if (typeof competitionData !== 'undefined' && 
                     typeof augustCompetitionData !== 'undefined' && 
-                    typeof septemberCompetitionData !== 'undefined') {
+                    typeof septemberCompetitionData !== 'undefined' &&
+                    typeof storeData !== 'undefined') {
                     console.log('所有資料載入成功，初始化頁面');
                     initializePage();
                 } else {
@@ -1052,6 +1104,7 @@
     <script src="competition-data.js" onload="onScriptsLoaded()"></script>
     <script src="competition-data-aug.js" onload="onScriptsLoaded()"></script>
     <script src="competition-data-sep.js" onload="onScriptsLoaded()"></script>
+    <script src="store_data_js.js" onload="onScriptsLoaded()"></script>
     
     <script>
         // 當前活動分頁
@@ -1190,16 +1243,27 @@
             event.target.classList.add('active');
             
             // 切換內容區域
-            document.querySelectorAll('#amount-content, #customer-content, #region-content, #statistics-content').forEach(content => {
+            document.querySelectorAll('#amount-content, #customer-content, #region-content, #outsource-content, #statistics-content').forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(tab + '-content').classList.add('active');
             
-            // 切換子導航標籤組
-            document.querySelectorAll('.tab-group').forEach(group => {
-                group.classList.remove('active');
-            });
-            document.getElementById(tab + '-tabs').classList.add('active');
+            // 處理子導航顯示/隱藏
+            const subNav = document.querySelector('.sub-nav');
+            
+            if (tab === 'outsource' || tab === 'statistics') {
+                // 委外/中和分析和統計儀表版不需要子導航
+                subNav.style.display = 'none';
+            } else {
+                // 其他分頁顯示子導航
+                subNav.style.display = 'block';
+                
+                // 切換子導航標籤組
+                document.querySelectorAll('.tab-group').forEach(group => {
+                    group.classList.remove('active');
+                });
+                document.getElementById(tab + '-tabs').classList.add('active');
+            }
             
             // 重置子導航狀態
             if (tab === 'amount') {
@@ -1239,6 +1303,13 @@
                 });
                 document.getElementById('region-營一').classList.add('active');
                 
+            } else if (tab === 'outsource') {
+                // 委外/中和分析：填充表格
+                currentGroupTab = 'outsource';
+                // 重置排序狀態
+                currentSort.field = 'storeName';
+                currentSort.direction = 'asc';
+                try { populateOutsourceTable('storeName', 'asc'); } catch (e) { console.warn('populateOutsourceTable failed', e); }
             } else if (tab === 'statistics') {
                 // 統計儀表版：渲染 KPI
                 currentGroupTab = 'statistics';
@@ -1246,7 +1317,9 @@
             }
             
             // 載入對應數據
-            loadTabContent();
+            if (tab !== 'outsource' && tab !== 'statistics') {
+                loadTabContent();
+            }
         }
 
         function switchGroupTab(tab) {
@@ -1467,6 +1540,10 @@
                 const avgAmountScore = Math.round((augScore + sepScore + octScore) / 3);
                 const avgDisplay = avgAmountScore > 0 ? formatNumber(avgAmountScore) : '0';
                 const isAvgQualified = isScoreQualifiedForStore(store, avgAmountScore);
+                
+                // 計算自我宣告達成率（使用平均積分）
+                const selfDeclaredTarget = store.自我宣告目標 || 0;
+                const selfDeclaredRate = selfDeclaredTarget > 0 ? Math.round((avgAmountScore / selfDeclaredTarget) * 100) + '%' : '0%';
 
                 // 計算客戶數積分相關變量 (8月 + 9月 + 10月)
                 const augCustomerScore = getAugustCustomerScore(store.storeName) || 0;
@@ -1489,6 +1566,19 @@
                 totalAugustOriginalRevenue += augustOriginalRevenue;
                 totalSeptOriginalRevenue += septOriginalRevenue;
                 totalOctOriginalRevenue += octOriginalRevenue;
+                
+                // 獲取委外/中和數據並計算三個月中和金額佔比
+                const storeOutsourceData = getStoreData(store.storeName);
+                const augZhAmount = storeOutsourceData?.august?.zhonghe?.amount || 0;
+                const augOutAmount = storeOutsourceData?.august?.outsource?.amount || 0;
+                const sepZhAmount = storeOutsourceData?.september?.zhonghe?.amount || 0;
+                const sepOutAmount = storeOutsourceData?.september?.outsource?.amount || 0;
+                const octZhAmount = storeOutsourceData?.october?.zhonghe?.amount || 0;
+                const octOutAmount = storeOutsourceData?.october?.outsource?.amount || 0;
+                const totalPercentage = calculatePercentage(
+                    augZhAmount + sepZhAmount + octZhAmount,
+                    augOutAmount + sepOutAmount + octOutAmount
+                );
 
                 row.innerHTML = `
                     <td class="store-name">${store.storeName}</td>
@@ -1506,9 +1596,9 @@
                     <td class="number-cell">${formatNumber(octOriginalRevenue)}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
-                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(selfDeclaredRate)}">${selfDeclaredRate}</span>
                     </td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalPercentage)}">${totalPercentage}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1602,6 +1692,11 @@
             } else if (currentMainTab === 'region') {
                 const region = currentGroupTab.replace('region-', '');
                 currentData = competitionData.filter(store => store.region === region);
+            } else if (currentMainTab === 'outsource') {
+                // 委外/中和分析使用不同的數據處理方式
+                populateOutsourceTable(field, currentSort.direction);
+                updateSortInfo(field);
+                return;
             }
 
             // 排序數據
@@ -1679,8 +1774,19 @@
                         valueB = b.自我宣告目標;
                         break;
                     case '自我宣告達成率':
-                        valueA = parseFloat(a.自我宣告達成率.replace('%', ''));
-                        valueB = parseFloat(b.自我宣告達成率.replace('%', ''));
+                        // 使用平均積分計算自我宣告達成率
+                        const aAugForRate = getAugustScore(a.storeName) || 0;
+                        const bAugForRate = getAugustScore(b.storeName) || 0;
+                        const aSepForRate = getSeptemberScore(a.storeName) || 0;
+                        const bSepForRate = getSeptemberScore(b.storeName) || 0;
+                        const aOctForRate = a.amountScore || 0;
+                        const bOctForRate = b.amountScore || 0;
+                        const aAvgForRate = Math.round((aAugForRate + aSepForRate + aOctForRate) / 3);
+                        const bAvgForRate = Math.round((bAugForRate + bSepForRate + bOctForRate) / 3);
+                        const aTargetForRate = a.自我宣告目標 || 1; // 避免除以0
+                        const bTargetForRate = b.自我宣告目標 || 1;
+                        valueA = (aAvgForRate / aTargetForRate) * 100;
+                        valueB = (bAvgForRate / bTargetForRate) * 100;
                         break;
                     case 'customerAvgRank':
                         // 使用平均客戶數積分排名
@@ -1725,6 +1831,58 @@
                         
                         valueA = Math.round((aAug + aSep + aOct) / 3);
                         valueB = Math.round((bAug + bSep + bOct) / 3);
+                        break;
+                    case 'aug中和金額佔比':
+                        // 8月中和金額佔比
+                        const aStoreDataAug = getStoreData(a.storeName);
+                        const bStoreDataAug = getStoreData(b.storeName);
+                        const aAugZh = aStoreDataAug?.august?.zhonghe?.amount || 0;
+                        const aAugOut = aStoreDataAug?.august?.outsource?.amount || 0;
+                        const bAugZh = bStoreDataAug?.august?.zhonghe?.amount || 0;
+                        const bAugOut = bStoreDataAug?.august?.outsource?.amount || 0;
+                        valueA = (aAugZh + aAugOut) === 0 ? 0 : (aAugZh / (aAugZh + aAugOut)) * 100;
+                        valueB = (bAugZh + bAugOut) === 0 ? 0 : (bAugZh / (bAugZh + bAugOut)) * 100;
+                        break;
+                    case 'sep中和金額佔比':
+                        // 9月中和金額佔比
+                        const aStoreDataSep = getStoreData(a.storeName);
+                        const bStoreDataSep = getStoreData(b.storeName);
+                        const aSepZh = aStoreDataSep?.september?.zhonghe?.amount || 0;
+                        const aSepOut = aStoreDataSep?.september?.outsource?.amount || 0;
+                        const bSepZh = bStoreDataSep?.september?.zhonghe?.amount || 0;
+                        const bSepOut = bStoreDataSep?.september?.outsource?.amount || 0;
+                        valueA = (aSepZh + aSepOut) === 0 ? 0 : (aSepZh / (aSepZh + aSepOut)) * 100;
+                        valueB = (bSepZh + bSepOut) === 0 ? 0 : (bSepZh / (bSepZh + bSepOut)) * 100;
+                        break;
+                    case 'oct中和金額佔比':
+                        // 10月中和金額佔比
+                        const aStoreDataOct = getStoreData(a.storeName);
+                        const bStoreDataOct = getStoreData(b.storeName);
+                        const aOctZh = aStoreDataOct?.october?.zhonghe?.amount || 0;
+                        const aOctOut = aStoreDataOct?.october?.outsource?.amount || 0;
+                        const bOctZh = bStoreDataOct?.october?.zhonghe?.amount || 0;
+                        const bOctOut = bStoreDataOct?.october?.outsource?.amount || 0;
+                        valueA = (aOctZh + aOctOut) === 0 ? 0 : (aOctZh / (aOctZh + aOctOut)) * 100;
+                        valueB = (bOctZh + bOctOut) === 0 ? 0 : (bOctZh / (bOctZh + bOctOut)) * 100;
+                        break;
+                    case 'total中和金額佔比':
+                        // 三個月中和金額佔比
+                        const aStoreDataTotal = getStoreData(a.storeName);
+                        const bStoreDataTotal = getStoreData(b.storeName);
+                        const aTotalZh = (aStoreDataTotal?.august?.zhonghe?.amount || 0) + 
+                                        (aStoreDataTotal?.september?.zhonghe?.amount || 0) + 
+                                        (aStoreDataTotal?.october?.zhonghe?.amount || 0);
+                        const aTotalOut = (aStoreDataTotal?.august?.outsource?.amount || 0) + 
+                                         (aStoreDataTotal?.september?.outsource?.amount || 0) + 
+                                         (aStoreDataTotal?.october?.outsource?.amount || 0);
+                        const bTotalZh = (bStoreDataTotal?.august?.zhonghe?.amount || 0) + 
+                                        (bStoreDataTotal?.september?.zhonghe?.amount || 0) + 
+                                        (bStoreDataTotal?.october?.zhonghe?.amount || 0);
+                        const bTotalOut = (bStoreDataTotal?.august?.outsource?.amount || 0) + 
+                                         (bStoreDataTotal?.september?.outsource?.amount || 0) + 
+                                         (bStoreDataTotal?.october?.outsource?.amount || 0);
+                        valueA = (aTotalZh + aTotalOut) === 0 ? 0 : (aTotalZh / (aTotalZh + aTotalOut)) * 100;
+                        valueB = (bTotalZh + bTotalOut) === 0 ? 0 : (bTotalZh / (bTotalZh + bTotalOut)) * 100;
                         break;
                     default:
                         return 0;
@@ -1820,12 +1978,34 @@
                 const avgScore = Math.round((augScoreValue + sepScoreValue + octScoreValue) / 3);
                 const avgDisplay = avgScore > 0 ? formatNumber(avgScore) : '0';
                 const isAvgQualified = isScoreQualifiedForStore(store, avgScore);
+                
+                // 計算自我宣告達成率（使用平均積分）
+                const selfDeclaredTarget = store.自我宣告目標 || 0;
+                const selfDeclaredRate = selfDeclaredTarget > 0 ? Math.round((avgScore / selfDeclaredTarget) * 100) + '%' : '0%';
 
                 // 累加總計
                 totalAugScore += augScoreValue;
                 totalSepScore += sepScoreValue;
                 totalOctScore += octScoreValue;
                 totalAvgScore += avgScore;
+                
+                // 獲取委外/中和數據
+                const storeOutsourceData = getStoreData(store.storeName);
+                const augZhAmount = storeOutsourceData?.august?.zhonghe?.amount || 0;
+                const augOutAmount = storeOutsourceData?.august?.outsource?.amount || 0;
+                const sepZhAmount = storeOutsourceData?.september?.zhonghe?.amount || 0;
+                const sepOutAmount = storeOutsourceData?.september?.outsource?.amount || 0;
+                const octZhAmount = storeOutsourceData?.october?.zhonghe?.amount || 0;
+                const octOutAmount = storeOutsourceData?.october?.outsource?.amount || 0;
+                
+                // 計算中和金額佔比
+                const augPercentage = calculatePercentage(augZhAmount, augOutAmount);
+                const sepPercentage = calculatePercentage(sepZhAmount, sepOutAmount);
+                const octPercentage = calculatePercentage(octZhAmount, octOutAmount);
+                const totalPercentage = calculatePercentage(
+                    augZhAmount + sepZhAmount + octZhAmount,
+                    augOutAmount + sepOutAmount + octOutAmount
+                );
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1837,11 +2017,12 @@
                     <td class="number-cell ${isAvgQualified ? 'qualified' : ''}">${avgDisplay}</td>
                     <td class="number-cell">${formatNumber(store.自我宣告目標)}</td>
                     <td class="number-cell">
-                        <span class="self-declared-rate ${getSelfDeclaredRateClass(store.自我宣告達成率)}">${store.自我宣告達成率}</span>
+                        <span class="self-declared-rate ${getSelfDeclaredRateClass(selfDeclaredRate)}">${selfDeclaredRate}</span>
                     </td>
-                    <td class="number-cell">${formatNumber(store.新客業績)}</td>
-                    <td class="number-cell">${formatNumber(store.舊客業績)}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(augPercentage)}">${augPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(sepPercentage)}">${sepPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(octPercentage)}">${octPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalPercentage)}">${totalPercentage}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1857,6 +2038,7 @@
                 <td class="number-cell">${formatNumber(totalSepScore)}</td>
                 <td class="number-cell">${formatNumber(totalOctScore)}</td>
                 <td class="number-cell">${formatNumber(totalAvgScore)}</td>
+                <td class="number-cell">-</td>
                 <td class="number-cell">-</td>
                 <td class="number-cell">-</td>
                 <td class="number-cell">-</td>
@@ -1900,6 +2082,24 @@
                 const sepScore = getSeptemberCustomerScore(store.storeName) || 0;
                 const octScore = store.customerScore || 0;
                 const avgScore = getAverageCustomerScore(store.storeName);
+                
+                // 獲取委外/中和數據
+                const storeOutsourceData = getStoreData(store.storeName);
+                const augZhAmount = storeOutsourceData?.august?.zhonghe?.amount || 0;
+                const augOutAmount = storeOutsourceData?.august?.outsource?.amount || 0;
+                const sepZhAmount = storeOutsourceData?.september?.zhonghe?.amount || 0;
+                const sepOutAmount = storeOutsourceData?.september?.outsource?.amount || 0;
+                const octZhAmount = storeOutsourceData?.october?.zhonghe?.amount || 0;
+                const octOutAmount = storeOutsourceData?.october?.outsource?.amount || 0;
+                
+                // 計算中和金額佔比
+                const augPercentage = calculatePercentage(augZhAmount, augOutAmount);
+                const sepPercentage = calculatePercentage(sepZhAmount, sepOutAmount);
+                const octPercentage = calculatePercentage(octZhAmount, octOutAmount);
+                const totalPercentage = calculatePercentage(
+                    augZhAmount + sepZhAmount + octZhAmount,
+                    augOutAmount + sepOutAmount + octOutAmount
+                );
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1910,9 +2110,10 @@
                     <td class="number-cell ${isCustomerQualifiedForStore(store, sepScore) ? 'qualified' : ''}">${sepScore}</td>
                     <td class="number-cell ${isCustomerQualifiedForStore(store, octScore) ? 'qualified' : ''}">${octScore}</td>
                     <td class="number-cell ${isCustomerQualifiedForStore(store, avgScore) ? 'qualified' : ''}">${avgScore}</td>
-                    <td class="number-cell">${store.新客數}</td>
-                    <td class="number-cell">${store.舊客數}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(augPercentage)}">${augPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(sepPercentage)}">${sepPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(octPercentage)}">${octPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalPercentage)}">${totalPercentage}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1952,6 +2153,24 @@
                 const sepScore = getSeptemberCustomerScore(store.storeName) || 0;
                 const octScore = store.customerScore || 0;
                 const avgScore = getAverageCustomerScore(store.storeName);
+                
+                // 獲取委外/中和數據
+                const storeOutsourceData = getStoreData(store.storeName);
+                const augZhAmount = storeOutsourceData?.august?.zhonghe?.amount || 0;
+                const augOutAmount = storeOutsourceData?.august?.outsource?.amount || 0;
+                const sepZhAmount = storeOutsourceData?.september?.zhonghe?.amount || 0;
+                const sepOutAmount = storeOutsourceData?.september?.outsource?.amount || 0;
+                const octZhAmount = storeOutsourceData?.october?.zhonghe?.amount || 0;
+                const octOutAmount = storeOutsourceData?.october?.outsource?.amount || 0;
+                
+                // 計算中和金額佔比
+                const augPercentage = calculatePercentage(augZhAmount, augOutAmount);
+                const sepPercentage = calculatePercentage(sepZhAmount, sepOutAmount);
+                const octPercentage = calculatePercentage(octZhAmount, octOutAmount);
+                const totalPercentage = calculatePercentage(
+                    augZhAmount + sepZhAmount + octZhAmount,
+                    augOutAmount + sepOutAmount + octOutAmount
+                );
 
                 row.innerHTML = `
                     <td class="number-cell">${rankDisplay}</td>
@@ -1962,9 +2181,10 @@
                     <td class="number-cell ${isCustomerQualifiedForStore(store, sepScore) ? 'qualified' : ''}">${sepScore}</td>
                     <td class="number-cell ${isCustomerQualifiedForStore(store, octScore) ? 'qualified' : ''}">${octScore}</td>
                     <td class="number-cell ${isCustomerQualifiedForStore(store, avgScore) ? 'qualified' : ''}">${avgScore}</td>
-                    <td class="number-cell">${store.新客數}</td>
-                    <td class="number-cell">${store.舊客數}</td>
-                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.中和比例)}">${store.中和比例}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(augPercentage)}">${augPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(sepPercentage)}">${sepPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(octPercentage)}">${octPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalPercentage)}">${totalPercentage}</span></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1996,11 +2216,24 @@
                 '舊客數': '舊客數',
                 '中和比例': '中和發包比例',
                 '客戶數排名': '客戶數排名',
-                '原始業績': '原始業績'
+                '原始業績': '原始業績',
+                'aug中和金額佔比': '8月中和金額佔比',
+                'sep中和金額佔比': '9月中和金額佔比',
+                'oct中和金額佔比': '10月中和金額佔比',
+                'total中和金額佔比': '三個月中和金額佔比',
+                'aug金額': '8月(中和/委外)',
+                'sep金額': '9月(中和/委外)',
+                'oct金額': '10月(中和/委外)',
+                'total金額': '8+9+10月(中和/委外)'
             };
             
             const direction = currentSort.direction === 'asc' ? '升序' : '降序';
-            const sortInfo = document.getElementById(`sort-info-${currentGroupTab}`);
+            let sortInfo = document.getElementById(`sort-info-${currentGroupTab}`);
+            
+            // 如果是委外/中和分析標籤頁，使用特定的 sort-info 元素
+            if (currentMainTab === 'outsource') {
+                sortInfo = document.getElementById('sort-info-outsource');
+            }
             
             if (sortInfo) {
                 sortInfo.textContent = `目前排序：依${fieldNames[field]} (${direction})`;
@@ -2230,7 +2463,309 @@
             setText('kpi-oct-old-rev', octOldRev);
             setText('kpi-oct-new-arpu', octNewArpu);
             setText('kpi-oct-old-arpu', octOldArpu);
+            
+            // 計算委外/中和統計
+            let augOutCount = 0, augOutAmount = 0, augZhCount = 0, augZhAmount = 0;
+            let sepOutCount = 0, sepOutAmount = 0, sepZhCount = 0, sepZhAmount = 0;
+            let octOutCount = 0, octOutAmount = 0, octZhCount = 0, octZhAmount = 0;
+            
+            if (typeof storeData !== 'undefined') {
+                competitionData.forEach(store => {
+                    const storeInfo = getStoreData(store.storeName);
+                    if (storeInfo) {
+                        augOutCount += storeInfo.august?.outsource?.count || 0;
+                        augOutAmount += storeInfo.august?.outsource?.amount || 0;
+                        augZhCount += storeInfo.august?.zhonghe?.count || 0;
+                        augZhAmount += storeInfo.august?.zhonghe?.amount || 0;
+                        
+                        sepOutCount += storeInfo.september?.outsource?.count || 0;
+                        sepOutAmount += storeInfo.september?.outsource?.amount || 0;
+                        sepZhCount += storeInfo.september?.zhonghe?.count || 0;
+                        sepZhAmount += storeInfo.september?.zhonghe?.amount || 0;
+                        
+                        octOutCount += storeInfo.october?.outsource?.count || 0;
+                        octOutAmount += storeInfo.october?.outsource?.amount || 0;
+                        octZhCount += storeInfo.october?.zhonghe?.count || 0;
+                        octZhAmount += storeInfo.october?.zhonghe?.amount || 0;
+                    }
+                });
+                
+                // 更新前三行的中和/委外卡片
+                // 8月
+                setText('kpi-aug-zh-amount', augZhAmount);
+                setText('kpi-aug-out-amount', augOutAmount);
+                setText('kpi-aug-zh-count', augZhCount);
+                setText('kpi-aug-out-count', augOutCount);
+                
+                // 9月
+                setText('kpi-sept-zh-amount', sepZhAmount);
+                setText('kpi-sept-out-amount', sepOutAmount);
+                setText('kpi-sept-zh-count', sepZhCount);
+                setText('kpi-sept-out-count', sepOutCount);
+                
+                // 10月
+                setText('kpi-oct-zh-amount', octZhAmount);
+                setText('kpi-oct-out-amount', octOutAmount);
+                setText('kpi-oct-zh-count', octZhCount);
+                setText('kpi-oct-out-count', octOutCount);
+            }
         }
+        
+        // 獲取委外/中和數據
+        function getStoreData(storeName) {
+            if (typeof storeData === 'undefined') return null;
+            return storeData.find(store => store.storeName === storeName);
+        }
+        
+        // 計算百分比（只返回百分比數字，例如 "86%"，四捨五入到整數）
+        function calculatePercentage(zhonghe, outsource) {
+            const zh = zhonghe || 0;
+            const out = outsource || 0;
+            const total = zh + out;
+            if (total === 0) return '0%';
+            return Math.round((zh / total) * 100) + '%';
+        }
+        
+        // 填充委外/中和表格
+        function populateOutsourceTable(sortField = 'storeName', sortDirection = 'asc') {
+            console.log('=== populateOutsourceTable ===');
+            console.log('sortField:', sortField, '| sortDirection:', sortDirection);
+            
+            const tbody = document.getElementById('outsource-table');
+            if (!tbody) {
+                console.error('outsource-table not found!');
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            // 檢查資料是否載入
+            if (typeof storeData === 'undefined') {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #e74c3c;">❌ 委外/中和數據尚未載入，請稍後重試</td></tr>';
+                console.error('storeData is undefined');
+                return;
+            }
+            
+            if (!Array.isArray(storeData) || storeData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #e74c3c;">❌ 委外/中和數據為空</td></tr>';
+                console.error('storeData is empty or not an array');
+                return;
+            }
+            
+            if (!competitionData || competitionData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px; color: #e74c3c;">❌ 競賽數據尚未載入</td></tr>';
+                console.error('competitionData is empty');
+                return;
+            }
+            
+            // 計算金額與件數合併顯示（中和金額(中和件數) / 委外金額(委外件數)）
+            function calculateCombinedDetail(zhAmount, zhCount, outAmount, outCount) {
+                const formattedZhAmount = formatNumber(zhAmount || 0);
+                const formattedOutAmount = formatNumber(outAmount || 0);
+                const zhCountNum = zhCount || 0;
+                const outCountNum = outCount || 0;
+                return `${formattedZhAmount}(${zhCountNum}) / ${formattedOutAmount}(${outCountNum})`;
+            }
+            
+            // 計算佔比數值（用於顏色判斷）
+            function calculateRatioValue(zhonghe, outsource) {
+                const zh = zhonghe || 0;
+                const out = outsource || 0;
+                const total = zh + out;
+                if (total === 0) return 0;
+                return (zh / total) * 100;
+            }
+            
+            // 初始化總計變數
+            let totalAugZhCount = 0, totalAugOutCount = 0, totalAugZhAmount = 0, totalAugOutAmount = 0;
+            let totalSepZhCount = 0, totalSepOutCount = 0, totalSepZhAmount = 0, totalSepOutAmount = 0;
+            let totalOctZhCount = 0, totalOctOutCount = 0, totalOctZhAmount = 0, totalOctOutAmount = 0;
+            
+            // 合併資料
+            const mergedData = competitionData.map(store => {
+                const storeInfo = getStoreData(store.storeName);
+                
+                // 8月數據
+                const augZhCount = storeInfo?.august?.zhonghe?.count || 0;
+                const augOutCount = storeInfo?.august?.outsource?.count || 0;
+                const augZhAmount = storeInfo?.august?.zhonghe?.amount || 0;
+                const augOutAmount = storeInfo?.august?.outsource?.amount || 0;
+                
+                // 9月數據
+                const sepZhCount = storeInfo?.september?.zhonghe?.count || 0;
+                const sepOutCount = storeInfo?.september?.outsource?.count || 0;
+                const sepZhAmount = storeInfo?.september?.zhonghe?.amount || 0;
+                const sepOutAmount = storeInfo?.september?.outsource?.amount || 0;
+                
+                // 10月數據
+                const octZhCount = storeInfo?.october?.zhonghe?.count || 0;
+                const octOutCount = storeInfo?.october?.outsource?.count || 0;
+                const octZhAmount = storeInfo?.october?.zhonghe?.amount || 0;
+                const octOutAmount = storeInfo?.october?.outsource?.amount || 0;
+                
+                // 累加總計
+                totalAugZhCount += augZhCount;
+                totalAugOutCount += augOutCount;
+                totalAugZhAmount += augZhAmount;
+                totalAugOutAmount += augOutAmount;
+                totalSepZhCount += sepZhCount;
+                totalSepOutCount += sepOutCount;
+                totalSepZhAmount += sepZhAmount;
+                totalSepOutAmount += sepOutAmount;
+                totalOctZhCount += octZhCount;
+                totalOctOutCount += octOutCount;
+                totalOctZhAmount += octZhAmount;
+                totalOctOutAmount += octOutAmount;
+                
+                return {
+                    storeName: store.storeName,
+                    group: store.group,
+                    region: store.region,
+                    // 百分比欄位（有顏色）
+                    augPercentage: calculatePercentage(augZhAmount, augOutAmount),
+                    augRatioValue: calculateRatioValue(augZhAmount, augOutAmount),
+                    sepPercentage: calculatePercentage(sepZhAmount, sepOutAmount),
+                    sepRatioValue: calculateRatioValue(sepZhAmount, sepOutAmount),
+                    octPercentage: calculatePercentage(octZhAmount, octOutAmount),
+                    octRatioValue: calculateRatioValue(octZhAmount, octOutAmount),
+                    totalPercentage: calculatePercentage(augZhAmount + sepZhAmount + octZhAmount, augOutAmount + sepOutAmount + octOutAmount),
+                    totalRatioValue: calculateRatioValue(augZhAmount + sepZhAmount + octZhAmount, augOutAmount + sepOutAmount + octOutAmount),
+                    // 合併明細欄位（金額+件數，無顏色）
+                    augCombined: calculateCombinedDetail(augZhAmount, augZhCount, augOutAmount, augOutCount),
+                    sepCombined: calculateCombinedDetail(sepZhAmount, sepZhCount, sepOutAmount, sepOutCount),
+                    octCombined: calculateCombinedDetail(octZhAmount, octZhCount, octOutAmount, octOutCount),
+                    totalCombined: calculateCombinedDetail(
+                        augZhAmount + sepZhAmount + octZhAmount, 
+                        augZhCount + sepZhCount + octZhCount,
+                        augOutAmount + sepOutAmount + octOutAmount, 
+                        augOutCount + sepOutCount + octOutCount
+                    )
+                };
+            });
+            
+            // 排序
+            mergedData.sort((a, b) => {
+                let valueA, valueB;
+                
+                switch(sortField) {
+                    case 'storeName':
+                        valueA = a.storeName;
+                        valueB = b.storeName;
+                        break;
+                    case 'group':
+                        valueA = a.group;
+                        valueB = b.group;
+                        break;
+                    case 'region':
+                        valueA = a.region;
+                        valueB = b.region;
+                        break;
+                    case 'aug中和金額佔比':
+                        valueA = a.augRatioValue;
+                        valueB = b.augRatioValue;
+                        break;
+                    case 'sep中和金額佔比':
+                        valueA = a.sepRatioValue;
+                        valueB = b.sepRatioValue;
+                        break;
+                    case 'oct中和金額佔比':
+                        valueA = a.octRatioValue;
+                        valueB = b.octRatioValue;
+                        break;
+                    case 'total中和金額佔比':
+                        valueA = a.totalRatioValue;
+                        valueB = b.totalRatioValue;
+                        break;
+                    case 'aug金額':
+                    case 'sep金額':
+                    case 'oct金額':
+                    case 'total金額':
+                        // 合併欄位暫不支援排序，使用門市名稱
+                        valueA = a.storeName;
+                        valueB = b.storeName;
+                        break;
+                    default:
+                        valueA = a.storeName;
+                        valueB = b.storeName;
+                }
+                
+                // 比較邏輯
+                if (typeof valueA === 'string') {
+                    return sortDirection === 'asc' 
+                        ? valueA.localeCompare(valueB)
+                        : valueB.localeCompare(valueA);
+                } else {
+                    return sortDirection === 'asc' 
+                        ? valueA - valueB
+                        : valueB - valueA;
+                }
+            });
+            
+            // 調試：顯示排序後的前5個結果
+            console.log('Sorted results (first 5):');
+            mergedData.slice(0, 5).forEach((store, i) => {
+                console.log(`${i+1}. ${store.storeName} - aug:${store.augPercentage} (${store.augRatioValue})`);
+            });
+            
+            // 填充表格
+            mergedData.forEach(store => {
+                const row = tbody.insertRow();
+                row.className = `group-${store.group.toLowerCase()}`;
+                
+                row.innerHTML = `
+                    <td class="store-name">${store.storeName}</td>
+                    <td style="text-align: center;">${getGroupBadge(store.group, true)}</td>
+                    <td>${getRegionBadge(store.region)}</td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.augPercentage)}">${store.augPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.sepPercentage)}">${store.sepPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.octPercentage)}">${store.octPercentage}</span></td>
+                    <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(store.totalPercentage)}">${store.totalPercentage}</span></td>
+                    <td class="number-cell">${store.augCombined}</td>
+                    <td class="number-cell">${store.sepCombined}</td>
+                    <td class="number-cell">${store.octCombined}</td>
+                    <td class="number-cell">${store.totalCombined}</td>
+                `;
+            });
+            
+            // 計算總計佔比和合併明細
+            const totalAugPercentage = calculatePercentage(totalAugZhAmount, totalAugOutAmount);
+            const totalAugCombined = calculateCombinedDetail(totalAugZhAmount, totalAugZhCount, totalAugOutAmount, totalAugOutCount);
+            
+            const totalSepPercentage = calculatePercentage(totalSepZhAmount, totalSepOutAmount);
+            const totalSepCombined = calculateCombinedDetail(totalSepZhAmount, totalSepZhCount, totalSepOutAmount, totalSepOutCount);
+            
+            const totalOctPercentage = calculatePercentage(totalOctZhAmount, totalOctOutAmount);
+            const totalOctCombined = calculateCombinedDetail(totalOctZhAmount, totalOctZhCount, totalOctOutAmount, totalOctOutCount);
+            
+            const grandTotalPercentage = calculatePercentage(
+                totalAugZhAmount + totalSepZhAmount + totalOctZhAmount,
+                totalAugOutAmount + totalSepOutAmount + totalOctOutAmount
+            );
+            
+            const grandTotalCombined = calculateCombinedDetail(
+                totalAugZhAmount + totalSepZhAmount + totalOctZhAmount,
+                totalAugZhCount + totalSepZhCount + totalOctZhCount,
+                totalAugOutAmount + totalSepOutAmount + totalOctOutAmount,
+                totalAugOutCount + totalSepOutCount + totalOctOutCount
+            );
+            
+            // 加入總計列
+            const totalRow = tbody.insertRow();
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td class="store-name">合計 (${mergedData.length}家)</td>
+                <td colspan="2">-</td>
+                <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalAugPercentage)}">${totalAugPercentage}</span></td>
+                <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalSepPercentage)}">${totalSepPercentage}</span></td>
+                <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(totalOctPercentage)}">${totalOctPercentage}</span></td>
+                <td class="number-cell"><span class="zhonghe-ratio ${getZhongheRatioClass(grandTotalPercentage)}">${grandTotalPercentage}</span></td>
+                <td class="number-cell">${totalAugCombined}</td>
+                <td class="number-cell">${totalSepCombined}</td>
+                <td class="number-cell">${totalOctCombined}</td>
+                <td class="number-cell">${grandTotalCombined}</td>
+            `;
+        }
+        
         // 客戶數積分門檻判斷：A/B組為60，C組為30
         function isCustomerQualifiedForStore(store, score) {
             const group = (store.group || '').toString().toUpperCase();
@@ -2247,6 +2782,7 @@
             if (typeof competitionData === 'undefined') missing.push('competition-data.js');
             if (typeof augustCompetitionData === 'undefined') missing.push('competition-data-aug.js');
             if (typeof septemberCompetitionData === 'undefined') missing.push('competition-data-sep.js');
+            if (typeof storeData === 'undefined') missing.push('store_data_js.js');
 
             if (missing.length) {
                 console.error('Missing data files:', missing.join(', '));
